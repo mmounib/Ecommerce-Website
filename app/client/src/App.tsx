@@ -11,13 +11,13 @@ import Logout from './Pages/Logout/Logout'
 import MainLayout from './Pages/MainLayout'
 import Payment from './Pages/Payment/Payment'
 import Product from './Pages/Product/Product'
-import Sign from './Pages/Sign/Sign'
+import SignIn from './Pages/SignIn/SignIn.tsx'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/sign" element={<Sign />} />
+        <Route path="/sign" element={<SignIn />} />
         <Route path="/error" element={<ErrorPage />} />
         <Route element={<MainLayout />} >
           <Route path="/" element={<Home />} />
