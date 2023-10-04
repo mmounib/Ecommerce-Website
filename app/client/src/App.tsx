@@ -1,49 +1,41 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import axios from 'axios'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import './Style/App.css'
+import Accessories from './Pages/Category/Accessories'
+import Clothes from './Pages/Category/Clothes'
+import Electronics from './Pages/Category/Electronics'
+import Kids from './Pages/Category/Kids'
+import CategoryLayout from './Pages/CategoryLayout'
+import ErrorPage from './Pages/ErrorPage'
+import Home from './Pages/Home/Home'
+import Logout from './Pages/Logout/Logout'
+import MainLayout from './Pages/MainLayout'
+import Payment from './Pages/Payment/Payment'
+import Product from './Pages/Product/Product'
+import Sign from './Pages/Sign/Sign'
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [response, setRes] = useState("")
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get('/api/');
-        setRes(res.data)
-      }
-      catch (error) {
-        console.log(error)
-      }
-    }
-    void fetchData()
-  }, [])
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>{response}</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/sign" element={<Sign />} />
+        <Route path="/error" element={<ErrorPage />} />
+        <Route element={<MainLayout />} >
+          <Route path="/" element={<Home />} />
+          <Route path="/category" element={<CategoryLayout />} >
+            <Route index element={<Kids />} />
+            <Route path="kids" element={<Kids />} />
+            <Route path="accessories" element={<Accessories />} />
+            <Route path="electronics" element={<Electronics />} />
+            <Route path="clothes" element={<Clothes />} />
+          </Route>
+          <Route path="/product" element={<Product />} >
+            <Route path=':id' element={<Product />} />
+          </Route>
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/logout" element={<Logout />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
