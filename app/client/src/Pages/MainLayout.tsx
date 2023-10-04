@@ -10,11 +10,11 @@ export default function MainLayout() {
   const {pathname} = useLocation()
   return (
     <div className='w-screen h-screen flex flex-col'>
-      <div className='flex flex-col z-50 w-screen top-0'>
+      <div className='flex flex-col z-50 w-full top-0'>
         {pathname === '/' && <Support />}
         <Header />
       </div>
-      <main className='flex-grow'>
+      <main className=''>
         <Outlet />
       </main>
       <footer className='flex items-center justify-between px-32 py-7 border-t-2 border-l-gray-400'>
