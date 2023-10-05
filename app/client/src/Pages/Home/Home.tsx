@@ -6,8 +6,6 @@ import addToCard from "../../assets/icons/Add to Cart-amico.svg"
 export default function Home() {
   return (
     <div className="flex flex-col justify-center items-center">
-      {/* cover */}
-      {/* <div className='cover w-full'></div> */}
       <section className='cover bg-slate-100 flex flex-col md:flex-row w-full justify-evenly items-center'>
         <div className='flex flex-col gap-4'>
           <h1 className="text-6xl font-semibold">Shopping Online</h1>

@@ -5,6 +5,10 @@ export default {
     ],
     theme: {
       extend: {
+        backgroundImage: {
+          "sign-bg": "url(./src/assets/ecommerce-image.jpg)",
+          "sign-in": "url(./src/assets/sign-in.jpg)",
+        },
         backgroundColor: {
           'primary-color': '#F5F5F5',
           'border-color': '#F7BAF8',
@@ -14,8 +18,7 @@ export default {
           'primary-color': '#F5F5F5',
           'secondary-color': '#121212',
         },
-      },
+      }
     },
-    plugins: [],
-  }
-  
+  plugins: [],
+};
