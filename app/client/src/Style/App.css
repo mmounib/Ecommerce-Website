@@ -20,7 +20,7 @@ body {
   background-size: cover;
 }
 
-.new_arrivals {
+.new_arrivals, .bestProducts {
   height: 59rem;
 }
 
@@ -36,4 +36,12 @@ body {
 
 .splide__arrow svg {
   fill: #121212 !important;
+}
+
+.explore {
+  height: 40rem;
+}
+
+.categories {
+  height: 34rem;
 }
