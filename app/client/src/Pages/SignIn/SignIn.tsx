@@ -1,11 +1,23 @@
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 
+interface signInProps {
+  username: string;
+  password: string;
+}
+
 const SignIn = () => {
+  const { register, handleSubmit } = useForm<signInProps>();
+
+  const submitForm: SubmitHandler<signInProps> = (data) => {
+    //! Need To Transfer This Data to The BACKEND Endpoint
+    console.log(data);
+  };
   return (
-    <section className="h-screen w-full">
+    <section className="h-screen w-full bg-sign-in bg-cover bg-gray-500 bg-blend-multiply">
       <div className="flex justify-center items-center w-full h-full">
-        <div className="flex border-secondary-color border-[1px] p-8 w-[450px] flex-col gap-6">
+        <div className="flex  bg-white  p-8 w-[450px] flex-col gap-6">
           <h2 className="text-secondary-color font-extrabold text-4xl">
             Welcome Back !
           </h2>
@@ -20,16 +32,18 @@ const SignIn = () => {
             <p className="text-xl">or</p>
             <span className=" border-b-gray-400 w-full border-[1px]"></span>
           </div>
-          <form className="mt-4">
+          <form className="mt-4" onSubmit={handleSubmit(submitForm)}>
             <input
               type="text"
               placeholder="Your Username"
               className="rounded-[10px] w-full py-4 border-secondary-color border-[1px] pl-4"
+              {...register("username", { required: true })}
             />
             <input
               type="password"
               placeholder="Your Password"
               className="rounded-[10px] w-full py-4 mt-6 border-secondary-color border-[1px] pl-4"
+              {...register("username", { required: true })}
             />
             <button
               type="submit"
