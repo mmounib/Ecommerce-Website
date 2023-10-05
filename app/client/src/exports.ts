@@ -1,7 +1,4 @@
-import Accessories from "./Pages/Category/Accessories";
-import Clothes from "./Pages/Category/Clothes";
-import Electronics from "./Pages/Category/Electronics";
-import Kids from "./Pages/Category/Kids";
+import Category from "./Pages/Category/Category";
 import CategoryLayout from "./Pages/CategoryLayout";
 import ErrorPage from "./Pages/ErrorPage";
 import Home from "./Pages/Home/Home";
@@ -13,10 +10,7 @@ import SignIn from "./Pages/SignIn/SignIn.tsx";
 import SignUp from "./Pages/SignIn/SignUp.tsx";
 
 export {
-    Accessories,
-    Clothes,
-    Electronics,
-    Kids,
+    Category,
     CategoryLayout,
     ErrorPage,
     Home,

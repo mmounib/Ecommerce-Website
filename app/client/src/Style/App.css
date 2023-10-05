@@ -21,11 +21,11 @@ body {
   height: 59rem;
 }
 
-.product {
+.newArrivalProduct {
   height: 500px;
 }
 
-.product img {
+.newArrivalProduct img {
   -webkit-box-shadow: 1px 4px 26px -11px rgba(66, 68, 90, 1);
   -moz-box-shadow: 1px 4px 26px -11px rgba(66, 68, 90, 1);
   box-shadow: 1px 3px 26px -13px rgba(66, 68, 90, 1);

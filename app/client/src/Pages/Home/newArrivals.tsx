@@ -6,7 +6,7 @@ export default function NewArrivals() {
 
     const products = data.map(product => {
         return(
-            <SplideSlide key={product.itemId} className='product flex flex-col gap-4 items-center text-center overflow-hidden'>
+            <SplideSlide key={product.itemId} className='newArrivalProduct flex flex-col gap-4 items-center text-center overflow-hidden'>
                 <img className='flex-grow rounded-lg' src={product.image} alt='' />
                 <div>
                     <h1 className='text-lg font-semibold'>{product.title}</h1>
