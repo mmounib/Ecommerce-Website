@@ -14,8 +14,8 @@ export default function Explore() {
 
     const categories = data.map((category, index) => {
         return(
-            <div key={category.id} className='relative flex flex-col gap-4 items-center text-primary-color'>
-                <img className='flex-grow rounded-lg w-96 h-full' src={category.image} alt='' />
+            <div key={category.id} className='exploreCard flex-grow flex-wrap w-full max-w-sm relative flex flex-col items-center text-primary-color'>
+                <img className='rounded-lg h-full w-full' src={category.image} alt='' />
                 <div className="absolute w-full h-full bg-black bg-opacity-5"></div>
                 <div className="flex flex-col items-center gap-4 absolute bottom-16 w-full">
                     <p className='text-center font-bold text-4xl'>{category.value}</p>
@@ -31,7 +31,7 @@ export default function Explore() {
         )
     })
   return (
-    <div className='categories flex justify-between w-full mt-auto'>
+    <div className='categories flex h-4/5 gap-4 justify-between w-full mt-auto'>
         {categories}
     </div>
   )

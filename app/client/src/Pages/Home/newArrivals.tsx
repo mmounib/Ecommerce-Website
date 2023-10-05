@@ -33,13 +33,16 @@ export default function NewArrivals() {
                 perPage: 2,
                 gap: '1rem',
                 padding: '0.75rem',
-
+            },
+            640: {
+                perPage: 1,
+                padding: '0.75rem',
             },
         }
     }
 
   return (
-    <div className='flex w-4/5'>
+    <div className='flex w-full sm:w-4/5'>
         <Splide
             hasTrack={ false }
             aria-label="..."

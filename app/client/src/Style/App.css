@@ -15,12 +15,13 @@ body {
 
 .cover {
   height: calc(100vh - 126px);
-  background-image: url('../assets/cover.png');
+  /* background-image: url('../assets/cover.png');
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center; */
 }
 
-.new_arrivals, .bestProducts {
+.new_arrivals {
   height: 59rem;
 }
 
@@ -40,8 +41,36 @@ body {
 
 .explore {
   height: 40rem;
+  @media (max-width: 1024px) {
+    height: 30rem;
+  }
 }
 
-.categories {
-  height: 34rem;
+@keyframes growMenu {
+  0% {
+      height: 10vh;
+      width: 10vw; 
+      border-radius: 0 0 0 300%;
+  }
+  100% {
+      height: 100vh;
+      width: 100vw;
+      border-radius: 0 0 0 300px;
+  }
+}
+
+@keyframes glow {
+  from { opacity: 0;}
+  to { opacity: 1;}
+}
+
+#mobile-nav {
+  height: 100vh;
+  width: 100vw;
+  border-radius: 0 0 0 50%;
+  animation: growMenu .5s ease-out 0s 1 normal forwards;
+}
+#mobile-nav ul {
+  opacity: 0;
+  animation: glow .4s ease-out .5s 1 normal forwards;
 }
