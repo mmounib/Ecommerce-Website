@@ -35,13 +35,13 @@ const SignIn = () => {
           <form className="mt-4" onSubmit={handleSubmit(submitForm)}>
             <input
               type="text"
-              placeholder="Your Username"
+              placeholder="Username"
               className="rounded-[10px] w-full py-4 border-secondary-color border-[1px] pl-4"
               {...register("username", { required: true })}
             />
             <input
               type="password"
-              placeholder="Your Password"
+              placeholder="Password"
               className="rounded-[10px] w-full py-4 mt-6 border-secondary-color border-[1px] pl-4"
               {...register("username", { required: true })}
             />

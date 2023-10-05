@@ -8,3 +8,65 @@
   font-family: Poppins, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   color: #121212;
 }
+
+body {
+  background: #F5F5F5;
+}
+
+.cover {
+  height: calc(100vh - 126px);
+}
+
+.new_arrivals {
+  height: 59rem;
+}
+
+.product {
+  height: 500px;
+}
+
+.product img {
+  -webkit-box-shadow: 1px 4px 26px -11px rgba(66, 68, 90, 1);
+  -moz-box-shadow: 1px 4px 26px -11px rgba(66, 68, 90, 1);
+  box-shadow: 1px 3px 26px -13px rgba(66, 68, 90, 1);
+}
+
+.splide__arrow svg {
+  fill: #121212 !important;
+}
+
+.explore {
+  height: 40rem;
+  @media (max-width: 1024px) {
+    height: 30rem;
+  }
+}
+
+@keyframes growMenu {
+  0% {
+      height: 10vh;
+      width: 10vw; 
+      border-radius: 0 0 0 300%;
+  }
+  100% {
+      height: 100vh;
+      width: 100vw;
+      border-radius: 0 0 0 300px;
+  }
+}
+
+@keyframes glow {
+  from { opacity: 0;}
+  to { opacity: 1;}
+}
+
+#mobile-nav {
+  height: 100vh;
+  width: 100vw;
+  border-radius: 0 0 0 50%;
+  animation: growMenu .5s ease-out 0s 1 normal forwards;
+}
+#mobile-nav ul {
+  opacity: 0;
+  animation: glow .4s ease-out .5s 1 normal forwards;
+}

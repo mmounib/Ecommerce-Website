@@ -38,13 +38,13 @@ const SignUp = () => {
           <form className="mt-4" onSubmit={handleSubmit(submitForm)}>
             <input
               type="text"
-              placeholder="Your Email"
+              placeholder="Email"
               className="rounded-[10px] w-full py-4 border-secondary-color border-[1px] pl-4"
               {...register("email", { required: true })}
             />
             <input
               type="text"
-              placeholder="Your Username"
+              placeholder="Username"
               className="rounded-[10px] mt-4 w-full py-4 border-secondary-color border-[1px] pl-4"
               {...register("username", { required: true })}
             />
@@ -69,6 +69,12 @@ const SignUp = () => {
               Sign Up
             </button>
           </form>
+          <span className="text-lg flex items-center justify-center w-full gap-2">
+            Already have an account?{" "}
+            <Link to={"/sign"} className="font-bold text-xl">
+              Sign In
+            </Link>
+          </span>
         </div>
       </div>
     </section>

@@ -1,19 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./Style/App.css";
 import {
-  Accessories,
-  CategoryLayout,
-  Clothes,
-  Electronics,
-  ErrorPage,
-  Home,
-  Kids,
-  Logout,
-  MainLayout,
-  Payment,
-  Product,
-  SignIn,
-  SignUp,
+  Accessories, CategoryLayout, Clothes,
+  Electronics, ErrorPage, Home,
+  Kids, Logout, MainLayout,
+  Payment, Product, SignIn, SignUp
 } from "./exports";
 
 function App() {
