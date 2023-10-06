@@ -17,13 +17,7 @@ export default function CategoryLayout() {
         <h1 className='font-bold text-5xl'>{category}</h1>
         <p className='text-center w-1/3'>Turpis vel imperdiet nulla malesuada vulputate volutpat. Amet dolor mi lacus amet etiam nulla id.</p>
       </div>
-      <section className='flex w-10/12 justify-between bg-red-900 gap-16 py-24'>
-        <div className='w-1/4 bg-red-500'>
-          {/* filter section */}
-          <p>dcascscsscscsssssssssssssssssssssssssssssszzzzzz</p>
-        </div>
-        <Outlet /> {/* products list */}
-      </section>
+      <Outlet />
     </div>
   )
 }

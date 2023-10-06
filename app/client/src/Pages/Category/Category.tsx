@@ -1,17 +1,37 @@
 import { Link, useLocation } from 'react-router-dom'
 import {data} from "../../Components/categoryProducts.json"
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useEffectOnUpdate } from '../../Hooks/useEffectOnUpdate';
 import axios from 'axios';
+import CustomerReview from './customerReview';
+import PriceField from './priceField';
+import {priceRange} from "../../interfaces"
+
 
 export default function Category() {
   const category = useRef<string>('')
+  const [reviewRange, setReviewRange] = useState<number>(0)
+  const [priceRange, setPriceRange] = useState<priceRange>({} as priceRange)
   const {pathname} = useLocation()
   // Use a regular expression to extract the "anything" part
   const match = pathname.match(/\/category\/(.+)/);
   // The extracted value is in match[1]
   if (match)
     category.current = match[1];
+
+  function resetInputs() {
+    setReviewRange(0)
+    setPriceRange({priceStart: '', priceEnd: ''})
+  }
+
+  useEffect(() => {
+    console.log('here');    
+    resetInputs()
+  }, [category.current])
+
+  function newData() {
+    console.log('ok');
+  }
 
   // useEffectOnUpdate(() => {
   //   const fetchProducts = async () => {
@@ -23,12 +43,12 @@ export default function Category() {
   //     }
   //   }
   //   void fetchProducts()
-  // }, [category.current])
+  // }, [category.current, reviewRange])
 
   const productsList = data.map(item => {
     return (
       <div className='product flex flex-col gap-4'>
-        <Link to={`/product/${item.itemId}`}><img className='w-64 h-96 rounded-lg' src={item.image} alt='' /></Link>
+        <Link to={`/product/${item.itemId}`}><img className='productCard w-64 h-96 rounded-lg' src={item.image} alt='' /></Link>
         <div>
           <h1 className='text-lg font-semibold'>{item.title}</h1>
           <p className='text-violet-800 font-medium'>{item.price}.00MAD</p>
@@ -37,8 +57,18 @@ export default function Category() {
     )
   })
   return (
-    <div className='flex flex-grow flex-wrap gap-8'>
-      {productsList}
-    </div>
+    <section className='flex w-10/12 justify-between gap-16 py-24'>
+      <div className='w-1/4 flex flex-col gap-4'>
+        <div className='flex justify-between'>
+          <p className='font-semibold text-xl'>Filter:</p>
+          <p className='font-medium cursor-pointer' onClick={resetInputs}>Reset all</p>
+        </div>
+        <CustomerReview setReviewRange={setReviewRange} />
+        <PriceField priceRange={priceRange} setPriceRange={setPriceRange} fetchData={newData} />
+      </div>
+      <div className='flex w-3/4 flex-wrap gap-8'>
+        {productsList}
+      </div>
+    </section>
   )
 }
