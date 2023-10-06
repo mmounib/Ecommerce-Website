@@ -57,8 +57,8 @@ export default function Category() {
     )
   })
   return (
-    <section className='flex w-10/12 justify-between gap-16 py-24'>
-      <div className='w-1/4 flex flex-col gap-4'>
+    <section className='flex flex-col lg:flex-row w-10/12 justify-between gap-16 py-24'>
+      <div className='filter lg:w-1/4 flex flex-col gap-4'>
         <div className='flex justify-between'>
           <p className='font-semibold text-xl'>Filter:</p>
           <p className='font-medium cursor-pointer' onClick={resetInputs}>Reset all</p>
@@ -66,7 +66,7 @@ export default function Category() {
         <CustomerReview setReviewRange={setReviewRange} />
         <PriceField priceRange={priceRange} setPriceRange={setPriceRange} fetchData={newData} />
       </div>
-      <div className='flex w-3/4 flex-wrap gap-8'>
+      <div className='flex lg:w-3/4 flex-wrap gap-8 justify-center'>
         {productsList}
       </div>
     </section>
