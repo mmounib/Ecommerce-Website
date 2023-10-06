@@ -1,9 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./Style/App.css";
 import {
-  Accessories, CategoryLayout, Clothes,
-  Electronics, ErrorPage, Home,
-  Kids, Logout, MainLayout,
+  CategoryLayout, Category, ErrorPage,
+  Home, Logout, MainLayout,
   Payment, Product, SignIn, SignUp
 } from "./exports";
 
@@ -17,11 +16,11 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/category" element={<CategoryLayout />}>
-            <Route index element={<Kids />} />
-            <Route path="kids" element={<Kids />} />
-            <Route path="accessories" element={<Accessories />} />
-            <Route path="electronics" element={<Electronics />} />
-            <Route path="clothes" element={<Clothes />} />
+            <Route index element={<Category />} />
+            <Route path="kids" element={<Category />} />
+            <Route path="accessories" element={<Category />} />
+            <Route path="electronics" element={<Category />} />
+            <Route path="clothes" element={<Category />} />
           </Route>
           <Route path="/product" element={<Product />}>
             <Route path=":id" element={<Product />} />
