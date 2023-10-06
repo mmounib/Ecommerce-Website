@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
