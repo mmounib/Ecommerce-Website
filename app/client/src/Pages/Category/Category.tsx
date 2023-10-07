@@ -63,7 +63,7 @@ export default function Category() {
           <p className='font-semibold text-xl'>Filter:</p>
           <p className='font-medium cursor-pointer' onClick={resetInputs}>Reset all</p>
         </div>
-        <CustomerReview setReviewRange={setReviewRange} />
+        <CustomerReview setReviewRange={setReviewRange} reviewRange={reviewRange} />
         <PriceField priceRange={priceRange} setPriceRange={setPriceRange} fetchData={newData} />
       </div>
       <div className='flex lg:w-3/4 flex-wrap gap-8 justify-center'>

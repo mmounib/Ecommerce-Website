@@ -23,7 +23,7 @@ export function Stars({value}: {value: number}) {
     )
 }
 
-export default function CustomerReview({setReviewRange}: {setReviewRange: React.Dispatch<SetStateAction<number>>}) {
+export default function CustomerReview({setReviewRange, reviewRange}: {setReviewRange: React.Dispatch<SetStateAction<number>>, reviewRange: number}) {
 
     const data = [
         {id: 4, value: '4'},
@@ -39,6 +39,7 @@ export default function CustomerReview({setReviewRange}: {setReviewRange: React.
                     type="radio"
                     name="reviewRange"
                     value={element.id}
+                    checked={(reviewRange > 0)}
                     onChange={() => setReviewRange(element.id)}
                 />
                 <Stars value={element.id} />
