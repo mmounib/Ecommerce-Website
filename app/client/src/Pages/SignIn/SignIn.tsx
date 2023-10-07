@@ -16,8 +16,8 @@ const SignIn = () => {
   };
   return (
     <section className="h-screen w-full bg-sign-in bg-cover bg-gray-500 bg-blend-multiply">
-      <div className="flex justify-center items-center w-full h-full">
-        <div className="flex  bg-white  p-8 w-[450px] flex-col gap-6">
+      <div className="flex items-center justify-center w-full h-full">
+        <div className="flex bg-white p-8 w-[450px] flex-col gap-6">
           <h2 className="text-secondary-color font-extrabold text-4xl">
             Welcome Back !
           </h2>
@@ -58,6 +58,13 @@ const SignIn = () => {
               Sign Up
             </Link>
           </span>
+        </div>
+        <div className="flex items-center justify-center border-[1px] w-[450px] h-[560px] border-secondary-color flex-col gap-4">
+          <h3 className="text-3xl font-mediun text-white">Welcome To</h3>
+          <h1 className="text-5xl font-extrabold text-white">MarketHub</h1>
+          <span className="border-[1px] border-primary-color opacity-50 w-[350px] mt-4 h-[1px] flex"></span>
+          <p className="font-light text-xl text-gray-300 capitalize mt-2">Sign in to start shopping</p>
+
         </div>
       </div>
     </section>

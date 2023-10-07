@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -75,6 +74,16 @@ const SignUp = () => {
               Sign In
             </Link>
           </span>
+        </div>
+        <div className="border-[1px] w-[450px] flex justify-center items-center border-secondary-color h-[635px]">
+          <div className="flex items-center justify-center  flex-col gap-4">
+            <h3 className="text-3xl font-mediun text-white">Welcome To</h3>
+            <h1 className="text-5xl font-extrabold text-white">MarketHub</h1>
+            <span className="border-[1px] border-primary-color opacity-50 w-[350px] mt-4 h-[1px] flex"></span>
+            <p className="font-light text-xl text-gray-300 capitalize mt-2">
+              create an account to start shopping
+            </p>
+          </div>
         </div>
       </div>
     </section>
