@@ -81,8 +81,12 @@ export default function Product() {
           Customer Reviews (42)
         </h1>
         <div className="flex flex-row-reverse h-full w-full justify-between mt-12">
-          <div className="flex border-[1px] h-[350px] w-[380px] border-secondary-color shadow-md shadow-gray-400 flex-col gap-4">
-            <h3 className="text-xl font-semibold mt-2">Overall Rating</h3>
+          <div className="flex border-[1px] h-[350px] w-[380px] px-4 py-2 border-secondary-color shadow-md shadow-gray-400 flex-col gap-6">
+            <h3 className="text-xl font-semibold mt-2 text-left">Overall Rating</h3>
+            <div className="flex items-center gap-2 pl-2">
+              <img src="../../../src/assets/icons/fUllStar.svg" alt="review start" className="w-[40px] h-[40px]"/>
+              <span className="font-semibold text-4xl">4.7</span>
+            </div>
           </div>
           <div className="flex flex-col gap-6 overflow-scroll">
             <CustomerReview
