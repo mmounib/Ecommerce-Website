@@ -2,18 +2,16 @@ import {nanoid} from 'nanoid'
 import { Link } from 'react-router-dom'
 import shoppingList from '../assets/icons/shoppingList.svg'
 import profile from '../assets/icons/profile.svg'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { HiMenu, HiOutlineX } from "react-icons/hi";
 import Xmark from "../assets/icons/xMark.svg"
 import image from "../assets/accessoriesCategory.jpeg"
 import trash from "../assets/icons/Trash.png"
-import { useEffectOnUpdate } from '../Hooks/useEffectOnUpdate'
 
 export default function Header() {
 
 
   const [showList, setShowList] = useState<boolean>(false);
-  const wrapperRef = useClickOutside(setShowList)
   const allLinks = [
     {id: nanoid() ,to:"/category/kids",value: "kids"},
     {id: nanoid() ,to:`/category/accessories` ,value: "accessories"},
@@ -28,27 +26,6 @@ export default function Header() {
   })
 
 const [On, setOn] = useState<boolean>(false)
-
-function useClickOutside(setter: React.Dispatch<React.SetStateAction<boolean>>) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const count = useRef<number>(0);
-  
-  useEffectOnUpdate(() => {
-    console.log(count);
-    
-    function handleClick(event: MouseEvent) {
-      if (count.current && wrapperRef.current && !wrapperRef.current.contains(event.target as Node))
-        setter(prev => !prev)
-      count.current += 1;
-    }
-    document.addEventListener("click", handleClick);
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, [wrapperRef]);
-
-  return wrapperRef;
-}
 
 const navLinks = allLinks.map(navLink => {
     return (
@@ -72,7 +49,7 @@ const totalPrice = 500
 
 const products = data.map(item => {
   return (
-    <div className='flex gap-8 justify-between w-full'>
+    <div className='flex gap-8 justify-between w-full' key={item.itemId}>
         <Link to={`/product/${item.itemId}`}><img className='productCard w-36 h-52 rounded-lg' src={item.image} alt='' /></Link>
         <div className='flex flex-col flex-grow justify-between'>
           <div className='flex flex-col items-start'>
@@ -92,15 +69,12 @@ const products = data.map(item => {
   )
 })
 
-console.log(showList);
-
-
 return (
     <header className='flex justify-between items-center text-xl px-8 lg:px-16 xl:px-24 py-7 border-b-2 border-l-gray-400'>
       <Link to="/" className='text-2xl font-bold'>MarketHub</Link>
       <ul className='gap-8 hidden md:flex lg:gap-12 xl:gap-16'>{navbar}</ul>
       <div className='flex gap-4'>
-        <img className='w-6 h-6 cursor-pointer' src={shoppingList} alt='' onClick={() => setShowList(prev => !prev)} />
+        <img className='w-6 h-6 cursor-pointer' src={shoppingList} alt='' onClick={() => setShowList(true)} />
         <img className='w-6 h-6' src={profile} alt='' />
         <HiMenu className="menu md:hidden w-6 h-6 cursor-pointer" onClick={() => setOn(prev => !prev)}/>
           {
@@ -114,10 +88,10 @@ return (
           }
       </div>
       {showList && <div className='absolute top-0 right-0 h-screen w-screen z-10 bg-secondary-color bg-opacity-30'>
-          <div className='list flex flex-col items-center gap-12 ml-auto w-[600px] h-screen bg-primary-color px-12' ref={wrapperRef}>
+          <div className='list flex flex-col items-center gap-12 ml-auto w-[600px] h-screen bg-primary-color px-12'>
             <header className='flex justify-between items-center w-full font-semibold text-2xl py-8 border-b-2 border-gray-300'>
               <p>Shopping List</p>
-              <img className='cursor-pointer' src={Xmark} alt='' onClick={() => setShowList(prev => !prev)} />
+              <img className='cursor-pointer' src={Xmark} alt='' onClick={() => setShowList(false)} />
             </header>
             <figure className='w-full flex flex-col gap-8 h-full overflow-x-hidden overflow-y-scroll'>
               {products}

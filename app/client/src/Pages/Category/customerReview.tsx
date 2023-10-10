@@ -1,26 +1,29 @@
 import fUllStar from "../../assets/icons/fUllStar.svg"
 import emptyStar from "../../assets/icons/emptyStar.svg"
 import { SetStateAction } from "react"
+import { nanoid } from 'nanoid';
 
-export function Stars({value}: {value: number}) {
-    const data = [
-        {full: fUllStar, empty: emptyStar},
-        {full: fUllStar, empty: emptyStar},
-        {full: fUllStar, empty: emptyStar},
-        {full: fUllStar, empty: emptyStar},
-        {full: fUllStar, empty: emptyStar}
-    ]
+function Stars({ value }: { value: number }) {
+  const data = Array.from({ length: 5 }, () => ({
+    id: nanoid(),
+    full: fUllStar,
+    empty: emptyStar,
+  }));
 
-    const content = data.map((item, index) => {
-        return (index < value) ? <img src={item.full} alt='' /> : <img src={item.empty} alt='' />;
-    })
+  const content = data.map((item, index) => (
+    <img
+      key={item.id}
+      src={index < value ? item.full : item.empty}
+      alt=''
+    />
+  ));
 
-    return (
-        <label className='flex gap-2 items-center'>
-            {content}
-            <p> && Up</p>
-        </label>
-    )
+  return (
+    <label className='flex gap-2 items-center'>
+      {content}
+      <p> && Up</p>
+    </label>
+  );
 }
 
 export default function CustomerReview({setReviewRange, reviewRange}: {setReviewRange: React.Dispatch<SetStateAction<number>>, reviewRange: number}) {
