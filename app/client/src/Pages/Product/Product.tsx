@@ -10,40 +10,44 @@ const CustomerReview = ({ name, date, text }: customer) => {
   return (
     <section className="flex items-start flex-col max-w-[400px] gap-2">
       <div className="flex flex-col items-center gap-4">
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-start justify-start">
           <img
             src="../../../src/assets/icons/profile.svg"
             alt="profile"
-            className="w-[90px] h-[90px]"
+            className="w-[70px] h-[70px]"
           />
           <div className="flex items-start flex-col gap-1">
             <h2 className="font-bold text-2xl">{name}</h2>
             <span className="text-gray-500 font-medium text-base">{date}</span>
+
+            <div className="flex mt-2 max-sm:mt-0 gap-2">
+              <img
+                src="../../../src/assets/icons/fUllStar.svg"
+                alt="reviews"
+                className="w-[30px] h-[30px]"
+              />
+              <img
+                src="../../../src/assets/icons/fUllStar.svg"
+                alt="reviews"
+                className="w-[30px] h-[30px]"
+              />
+              <img
+                src="../../../src/assets/icons/fUllStar.svg"
+                alt="reviews"
+                className="w-[30px] h-[30px]"
+              />
+              <img
+                src="../../../src/assets/icons/fUllStar.svg"
+                alt="reviews"
+                className="w-[30px] h-[30px]"
+              />
+            </div>
+
+            <p className="text-base mt-4 text-left font-light text-gray-600">
+              {text}
+            </p>
           </div>
         </div>
-        <div className="flex ml-auto gap-2">
-          <img
-            src="../../../src/assets/icons/fUllStar.svg"
-            alt="reviews"
-            className="w-[30px] h-[30px]"
-          />
-          <img
-            src="../../../src/assets/icons/fUllStar.svg"
-            alt="reviews"
-            className="w-[30px] h-[30px]"
-          />
-          <img
-            src="../../../src/assets/icons/fUllStar.svg"
-            alt="reviews"
-            className="w-[30px] h-[30px]"
-          />
-          <img
-            src="../../../src/assets/icons/fUllStar.svg"
-            alt="reviews"
-            className="w-[30px] h-[30px]"
-          />
-        </div>
-        <p className="text-base font-light text-gray-600">{text}</p>
       </div>
     </section>
   );
@@ -56,7 +60,7 @@ export default function Product() {
         <img
           src="../../../src/assets/accessoriesCategory.jpeg"
           alt="product image"
-          className="h-[560px] w-[450px]"
+          className="h-[560px] w-[450px] rounded-[5px]"
         />
         <div className="flex flex-col gap-10 flex-grow h-full">
           <div className="flex flex-col items-start gap-4">
@@ -66,7 +70,7 @@ export default function Product() {
             </span>
           </div>
           <div className="flex flex-col gap-4">
-            <button className="inline-block uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">
+            <button className="inline-block rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">
               Add To Cart
             </button>
             <button className="inline-block button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4">
@@ -82,9 +86,15 @@ export default function Product() {
         </h1>
         <div className="flex flex-row-reverse h-full w-full justify-between mt-12">
           <div className="flex border-[1px] h-[350px] w-[380px] px-4 py-2 border-secondary-color shadow-md shadow-gray-400 flex-col gap-6">
-            <h3 className="text-xl font-semibold mt-2 text-left">Overall Rating</h3>
+            <h3 className="text-xl font-semibold mt-2 text-left">
+              Overall Rating
+            </h3>
             <div className="flex items-center gap-2 pl-2">
-              <img src="../../../src/assets/icons/fUllStar.svg" alt="review start" className="w-[40px] h-[40px]"/>
+              <img
+                src="../../../src/assets/icons/fUllStar.svg"
+                alt="review start"
+                className="w-[40px] h-[40px]"
+              />
               <span className="font-semibold text-4xl">4.7</span>
             </div>
           </div>
