@@ -11,11 +11,9 @@ import {priceRange} from "../../interfaces"
 export default function Category() {
   const category = useRef<string>('')
   const [reviewRange, setReviewRange] = useState<number>(0)
-  const [priceRange, setPriceRange] = useState<priceRange>({} as priceRange)
+  const [priceRange, setPriceRange] = useState<priceRange>({priceStart: '', priceEnd: ''})
   const {pathname} = useLocation()
-  // Use a regular expression to extract the "anything" part
   const match = pathname.match(/\/category\/(.+)/);
-  // The extracted value is in match[1]
   if (match)
     category.current = match[1];
 
@@ -25,7 +23,6 @@ export default function Category() {
   }
 
   useEffect(() => {
-    console.log('here');    
     resetInputs()
   }, [category.current])
 
@@ -47,7 +44,7 @@ export default function Category() {
 
   const productsList = data.map(item => {
     return (
-      <div className='product flex flex-col gap-4'>
+      <div className='product flex flex-col gap-4' key={item.itemId}>
         <Link to={`/product/${item.itemId}`}><img className='productCard w-64 h-96 rounded-lg' src={item.image} alt='' /></Link>
         <div>
           <h1 className='text-lg font-semibold'>{item.title}</h1>
