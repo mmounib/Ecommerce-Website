@@ -1,5 +1,8 @@
 {
     "devDependencies": {
+        "@types/passport-jwt": "^3.0.10",
+        "dotenv-cli": "^7.3.0",
+        "pactum": "^3.5.1",
         "tailwindcss": "^3.3.3",
         "turbo": "1.10.7"
     },
@@ -8,5 +11,11 @@
     },
     "workspaces": [
         "app/*"
-    ]
+    ],
+    "dependencies": {
+        "@nestjs/jwt": "^10.1.1",
+        "@nestjs/passport": "^10.0.2",
+        "passport": "^0.6.0",
+        "passport-jwt": "^4.0.1"
+    }
 }
