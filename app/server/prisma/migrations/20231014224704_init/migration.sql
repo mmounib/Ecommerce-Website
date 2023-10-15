@@ -6,6 +6,7 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "hash" TEXT NOT NULL,
+    "hashedRt" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );

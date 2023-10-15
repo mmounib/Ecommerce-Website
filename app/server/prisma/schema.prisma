@@ -18,6 +18,7 @@ model user {
   email    String @unique
   username String @unique
   hash     String
+  hashedRt String?
 
   @@map("users")
 }
