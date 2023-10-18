@@ -1,5 +1,3 @@
-import React from "react";
-
 interface customer {
   name: string;
   date: string;
@@ -8,9 +6,9 @@ interface customer {
 
 const CustomerReview = ({ name, date, text }: customer) => {
   return (
-    <section className="flex items-start flex-col max-w-[400px] gap-2">
+    <section className="flex items-start flex-col max-w-[500px] gap-4">
       <div className="flex flex-col items-center gap-4">
-        <div className="flex gap-4 items-start justify-start">
+        <div className="flex gap-5 items-start justify-start">
           <img
             src="../../../src/assets/icons/profile.svg"
             alt="profile"
@@ -43,9 +41,11 @@ const CustomerReview = ({ name, date, text }: customer) => {
               />
             </div>
 
-            <p className="text-base mt-4 text-left font-light text-gray-600">
+            <p className="text-base mt-4 text-left text-secondary-color">
               {text}
             </p>
+            {/*if there is no person dont display it*/}
+            <span className=" mt-4 font-medium text-base capitalize text-gray-400">5 person helped</span>
           </div>
         </div>
       </div>

@@ -8,11 +8,11 @@
   "scripts": {
     "prisma:dev:deploy": "prisma migrate deploy",
     "db:dev:rm": "sudo docker compose rm -sfv db-dev",
-    "db:dev:up": "sudo docker compose up db-dev -d",
+    "db:dev:up": "sudo docker compose up --build db-dev -d",
     "db:dev:restart": "npm run db:dev:rm && npm run db:dev:up && sleep 1 && npm run prisma:dev:deploy",
     "prisma:test:deploy": "dotenv -e .env.test -- prisma migrate deploy",
     "db:test:rm": "sudo docker compose rm -sfv db-test",
-    "db:test:up": "sudo docker compose up db-test -d",
+    "db:test:up": "sudo docker compose up --build db-test -d",
     "db:test:restart": "npm run db:test:rm && npm run db:test:up && sleep 1 && npm run prisma:test:deploy",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

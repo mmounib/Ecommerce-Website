@@ -16,18 +16,19 @@ model user {
   updatedAt DateTime @updatedAt
 
   email    String  @unique
+  address  String?
   username String  @unique
   hash     String
   hashedRt String?
 
-  cards cardsList?
+  cards      cardsList?
+  favourites FavouritesList?
 
   @@map("users")
 }
 
 model cardsList {
   id      Int                @id @unique @default(autoincrement())
-  items   Int
   userId  Int                @unique
   user    user               @relation(fields: [userId], references: [id])
   product CardsListProduct[]
@@ -36,13 +37,13 @@ model cardsList {
 model CardsListProduct {
   id          Int       @id @default(autoincrement())
   productId   Int
-  product     product   @relation(fields: [productId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
   cardsListId Int
   cardsList   cardsList @relation(fields: [cardsListId], references: [id])
-  quantity    Int // Add quantity field to specify how many of this product to buy
+  quantity    Int       @default(1)
 }
 
-model product {
+model Product {
   id    Int      @id @unique
   title String
   price Float
@@ -54,9 +55,19 @@ model product {
   categoryId      Int
   productCategory category @relation(fields: [categoryId], references: [id])
 
+  favouriteId      Int
+  productFavourite FavouritesList[]
+
   ProductReviews   reviews[]
   cardsListId      Int
   CardsListProduct CardsListProduct[]
+}
+
+model FavouritesList {
+  id      Int       @id @unique @default(autoincrement())
+  userId  Int       @unique
+  user    user      @relation(fields: [userId], references: [id])
+  product Product[]
 }
 
 model reviews {
@@ -68,7 +79,7 @@ model reviews {
   helpful Int
 
   ProductId Int
-  Product   product @relation(fields: [ProductId], references: [id])
+  Product   Product @relation(fields: [ProductId], references: [id])
 }
 
 model category {
@@ -76,5 +87,5 @@ model category {
   type        String @unique
   description String
 
-  products product[]
+  products Product[]
 }
