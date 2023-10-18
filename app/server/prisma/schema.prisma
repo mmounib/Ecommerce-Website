@@ -19,5 +19,61 @@ model user {
   username String @unique
   hash     String
 
+  cards cardsList?
+
   @@map("users")
+}
+
+model cardsList {
+  id      Int                @id @unique @default(autoincrement())
+  items   Int
+  userId  Int                @unique
+  user    user               @relation(fields: [userId], references: [id])
+  product CardsListProduct[]
+}
+
+model CardsListProduct {
+  id          Int       @id @default(autoincrement())
+  productId   Int
+  product     product   @relation(fields: [productId], references: [id])
+  cardsListId Int
+  cardsList   cardsList @relation(fields: [cardsListId], references: [id])
+  quantity    Int // Add quantity field to specify how many of this product to buy
+}
+
+model product {
+  id    Int      @id @unique
+  title String
+  price Float
+  image String[]
+
+  descritption String[]
+  ImageDesc    String[]
+
+  categoryId      Int
+  productCategory category @relation(fields: [categoryId], references: [id])
+
+  ProductReviews   reviews[]
+  cardsListId      Int
+  CardsListProduct CardsListProduct[]
+}
+
+model reviews {
+  id      Int      @id
+  Date    String
+  content String
+  stars   Int
+  images  String[]
+  helpful Int
+
+  ProductId Int
+  Product   product @relation(fields: [ProductId], references: [id])
+}
+
+model category {
+  id          Int    @id @unique
+  type        String @unique
+  description String
+
+  products product[]
 }
