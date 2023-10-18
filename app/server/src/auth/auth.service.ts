@@ -57,6 +57,19 @@ export class AuthService {
     return tokens;
   }
 
+  async getData(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    // if user doesn't exist throw exception
+    if (!user) throw new ForbiddenException('user not found');
+    // compare password
+    delete user.hash;
+    return user;
+  }
+
   async logout(userId: number) {
     await this.prisma.user.updateMany({
       where: {
@@ -79,6 +92,7 @@ export class AuthService {
     });
     if (!user || !user.hashedRt)
       throw new ForbiddenException('Access denied');
+
     const rtMatches = await argon.verify(user.hashedRt, rt);
     if (!rtMatches) throw new ForbiddenException('Access denied');
 
@@ -96,7 +110,7 @@ export class AuthService {
         },
         {
           secret: this.config.get('AT_SECRET'),
-          expiresIn: 60,
+          expiresIn: 60 * 60,
         },
       ),
       this.jwtService.signAsync(
@@ -123,7 +137,7 @@ export class AuthService {
         id: userId,
       },
       data: {
-        hashedRt: rt,
+        hashedRt: hash,
       },
     });
   }

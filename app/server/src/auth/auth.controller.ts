@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -10,7 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthDto, LoginDto } from './dto';
 import { GetUser, GetUserId } from '../common/decoratores';
-import { RtGuard } from '../common/guards';
+import { AtGuard, RtGuard } from '../common/guards';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +35,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout(@GetUserId() userId: number) {
     return this.authService.logout(userId);
+  }
+
+  @Get('')
+  async getData(@GetUserId() userId: number) {
+    return this.authService.getData(userId);
   }
 
   @SetMetadata('isPublic', true)
