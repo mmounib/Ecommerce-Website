@@ -10,6 +10,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model revocatedTokens {
+  token String @id @unique
+}
+
 model user {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -23,8 +27,6 @@ model user {
 
   cards      cardsList?
   favourites FavouritesList?
-
-  @@map("users")
 }
 
 model cardsList {
