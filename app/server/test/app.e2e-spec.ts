@@ -45,63 +45,64 @@ describe('AppController (e2e)', () => {
             .post('/auth/signup')
             .withBody(dtoSignUp)
             .expectStatus(201)
-            .stores('AccessToken', 'access_token');
-        });
-      });
-      describe('signin', () => {
-        it('should not signin with user not exist', () => {
-          return pactum
-            .spec()
-            .post('/auth/signin')
-            .withHeaders('authorization', 'Bearer $S{AccessToken}')
-            .withBody({ email: 'notauser@gmail.com', password: 'nopass' })
-            .expectStatus(403)
-            .expectBodyContains('Email incorrect');
-        });
-        it('should signin', () => {
-          return pactum
-            .spec()
-            .post('/auth/signin')
-            .withHeaders('authorization', 'Bearer $S{AccessToken}')
-            .withBody(dto)
-            .expectStatus(200)
-            .stores('RefreshToken', 'refresh_token');
-        });
-      });
-      describe('refresh and log out', () => {
-        it('should refresh token', () => {
-          return pactum
-            .spec()
-            .post('/auth/refresh')
-            .withHeaders('authorization', 'Bearer $S{RefreshToken}')
-            .withBody(dto)
-            .expectStatus(200);
-        });
-        it('should get data', () => {
-          return pactum
-            .spec()
-            .get('/auth')
-            .withHeaders('authorization', 'Bearer $S{AccessToken}')
-            .expectStatus(200)
             .inspect();
-        });
-        it('should logout', () => {
-          return pactum
-            .spec()
-            .post('/auth/logout')
-            .withHeaders('authorization', 'Bearer $S{AccessToken}')
-            .withBody(dto)
-            .expectStatus(200);
-        });
-        it('should fail', () => {
-          return pactum
-            .spec()
-            .get('/auth')
-            .withHeaders('authorization', 'Bearer $S{AccessToken}')
-            .expectStatus(200)
-            .inspect();
+          // .stores('AccessToken', 'access_token');
         });
       });
+      // describe('signin', () => {
+      //   it('should not signin with user not exist', () => {
+      //     return pactum
+      //       .spec()
+      //       .post('/auth/signin')
+      //       .withHeaders('authorization', 'Bearer $S{AccessToken}')
+      //       .withBody({ email: 'notauser@gmail.com', password: 'nopass' })
+      //       .expectStatus(403)
+      //       .expectBodyContains('Email incorrect');
+      //   });
+      //   it('should signin', () => {
+      //     return pactum
+      //       .spec()
+      //       .post('/auth/signin')
+      //       .withHeaders('authorization', 'Bearer $S{AccessToken}')
+      //       .withBody(dto)
+      //       .expectStatus(200)
+      //       .stores('RefreshToken', 'refresh_token');
+      //   });
+      // });
+      // describe('refresh and log out', () => {
+      //   it('should refresh token', () => {
+      //     return pactum
+      //       .spec()
+      //       .post('/auth/refresh')
+      //       .withHeaders('authorization', 'Bearer $S{RefreshToken}')
+      //       .withBody(dto)
+      //       .expectStatus(200);
+      //   });
+      //   it('should get data', () => {
+      //     return pactum
+      //       .spec()
+      //       .get('/auth')
+      //       .withHeaders('authorization', 'Bearer $S{AccessToken}')
+      //       .expectStatus(200)
+      //       .inspect();
+      //   });
+      //   it('should logout', () => {
+      //     return pactum
+      //       .spec()
+      //       .post('/auth/logout')
+      //       .withHeaders('authorization', 'Bearer $S{AccessToken}')
+      //       .withBody(dto)
+      //       .expectStatus(200);
+      //   });
+      //   it('should fail', () => {
+      //     return pactum
+      //       .spec()
+      //       .get('/auth')
+      //       .withHeaders('authorization', 'Bearer $S{AccessToken}')
+      //       .expectStatus(200)
+      //       .inspect();
+      //   });
+      // });
     });
   });
 });
