@@ -22,7 +22,7 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async signup(dto: AuthDto) {
+  async signup(dto: AuthDto, res: Response) {
     // generate the password hash
     const hash = await argon.hash(dto.password);
     // save the new user in the db
@@ -39,10 +39,12 @@ export class AuthService {
         this.newRefreshToken(user.id, user.email),
       ]);
       await this.updateRtHash(user.id, refreshToken);
-      return {
-        accessToken,
-        refreshToken,
+      const tokens = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       };
+      this.setCookies(res, tokens);
+      return '';
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002')
@@ -52,7 +54,7 @@ export class AuthService {
     }
   }
 
-  async signin(dto: LoginDto) {
+  async signin(dto: LoginDto, res: Response) {
     // find the user by the email
     const user = await this.prisma.user.findUnique({
       where: {
@@ -60,20 +62,19 @@ export class AuthService {
       },
     });
     // if user doesn't exist throw exception
-    if (!user) throw new ForbiddenException('Email incorrect');
+    if (!user) return 'Your Email Is Incorrect';
     // compare password
     const pwMatches = await argon.verify(user.hash, dto.password);
     // if password incorrect throw exception
-    if (!pwMatches) throw new ForbiddenException('password incorrect');
+    if (!pwMatches) return 'Your Password Is Incorrect';
     const [accessToken, refreshToken] = await Promise.all([
       this.newAccessToken(user.id, user.email),
       this.newRefreshToken(user.id, user.email),
     ]);
     await this.updateRtHash(user.id, refreshToken);
-    return {
-      accessToken,
-      refreshToken,
-    };
+    const tokens = { accessToken: accessToken, refreshToken: refreshToken };
+    this.setCookies(res, tokens);
+    return '';
   }
 
   async getData(userId: number) {
