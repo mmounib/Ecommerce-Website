@@ -11,7 +11,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Tokens } from './Types';
+import { Tokens } from '../Types';
 import { Response } from 'express';
 
 @Injectable()

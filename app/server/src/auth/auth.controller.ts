@@ -42,6 +42,12 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request) {
+    const isRevocated = await this.prisma.revocatedTokens.findUnique({
+      where: {
+        token: req.cookies.at,
+      },
+    });
+    if (isRevocated) throw new UnauthorizedException('invalid token');
     return this.authService.logout(req.user['sub'], req.cookies.at);
   }
 

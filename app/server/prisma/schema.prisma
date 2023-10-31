@@ -10,10 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model revocatedTokens {
-  token String @id @unique
-}
-
 model user {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -25,55 +21,37 @@ model user {
   hash     String
   hashedRt String?
 
-  cards      cardsList?
+  cards      ShoppingList?
   favourites FavouritesList?
 }
 
-model cardsList {
-  id      Int                @id @unique @default(autoincrement())
-  userId  Int                @unique
-  user    user               @relation(fields: [userId], references: [id])
-  product CardsListProduct[]
-}
+model category {
+  id          Int    @id @default(autoincrement())
+  type        String @unique
+  description String
 
-model CardsListProduct {
-  id          Int       @id @default(autoincrement())
-  productId   Int
-  product     Product   @relation(fields: [productId], references: [id])
-  cardsListId Int
-  cardsList   cardsList @relation(fields: [cardsListId], references: [id])
-  quantity    Int       @default(1)
+  products Product[]
 }
 
 model Product {
-  id    Int      @id @unique
-  title String
-  price Float
-  image String[]
+  id         Int       @id @unique
+  title      String
+  price      String
+  image      String[]
+  ImageDesc  String[]
+  base       skuBase[]
+  props      skuProp[]
+  reviews    reviews[]
+  categoryId Int
+  category   category  @relation(fields: [categoryId], references: [id])
 
-  descritption String[]
-  ImageDesc    String[]
-
-  categoryId      Int
-  productCategory category @relation(fields: [categoryId], references: [id])
-
-  favouriteId      Int
-  productFavourite FavouritesList[]
-
-  ProductReviews   reviews[]
-  cardsListId      Int
-  CardsListProduct CardsListProduct[]
-}
-
-model FavouritesList {
-  id      Int       @id @unique @default(autoincrement())
-  userId  Int       @unique
-  user    user      @relation(fields: [userId], references: [id])
-  product Product[]
+  productFavourite FavouriteProducts[]
+  productShopping  ShoppingProducts[]
+  CardsList        CardsList[]
 }
 
 model reviews {
-  id      Int      @id
+  id      Int      @id @default(autoincrement())
   Date    String
   content String
   stars   Int
@@ -84,10 +62,80 @@ model reviews {
   Product   Product @relation(fields: [ProductId], references: [id])
 }
 
-model category {
-  id          Int    @id @unique
-  type        String @unique
-  description String
+model FavouritesList {
+  id      Int                 @id @unique @default(autoincrement())
+  userId  Int                 @unique
+  user    user                @relation(fields: [userId], references: [id])
+  product FavouriteProducts[]
+}
 
-  products Product[]
+model ShoppingList {
+  id               Int                @id @unique @default(autoincrement())
+  userId           Int                @unique
+  user             user               @relation(fields: [userId], references: [id])
+  product          CardsList[]
+  ShoppingProducts ShoppingProducts[]
+}
+
+model CardsList {
+  productId      Int
+  product        Product      @relation(fields: [productId], references: [id])
+  ShoppingListId Int
+  ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
+  quantity       Int          @default(1)
+
+  @@id([productId, ShoppingListId])
+}
+
+model FavouriteProducts {
+  FavouritesList FavouritesList @relation(fields: [favouriteId], references: [id])
+  favouriteId    Int
+
+  Product   Product @relation(fields: [productId], references: [id])
+  productId Int
+
+  @@id([productId, favouriteId])
+}
+
+model ShoppingProducts {
+  ShoppingList ShoppingList @relation(fields: [ShoppingId], references: [id])
+  ShoppingId   Int
+
+  Product   Product @relation(fields: [productId], references: [id])
+  productId Int
+
+  @@id([productId, ShoppingId])
+}
+
+model skuBase {
+  skuId          String  @id
+  propMap        String
+  price          Float
+  promotionPrice Float
+  quantity       Int
+  ext            String
+  Product        Product @relation(fields: [productId], references: [id])
+  productId      Int
+}
+
+model skuValues {
+  vid      Int     @id
+  name     String  @unique
+  image    String?
+  propTips String
+
+  skuProp    skuProp @relation(fields: [skuPropPid], references: [pid])
+  skuPropPid Int
+}
+
+model skuProp {
+  pid       Int         @id
+  name      String      @unique
+  values    skuValues[]
+  Product   Product     @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model revocatedTokens {
+  token String @id @unique
 }
