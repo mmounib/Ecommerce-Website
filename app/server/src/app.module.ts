@@ -7,12 +7,7 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    UserModule,
-    AuthModule,
-    PrismaModule,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), UserModule, AuthModule, PrismaModule],
   providers: [AppService],
   controllers: [AppController],
 })

@@ -39,6 +39,7 @@ export type skuValues = {
 };
 
 export type skuProp = {
+  id?: string;
   pid: number;
   name: string;
   values: skuValues[];

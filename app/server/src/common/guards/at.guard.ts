@@ -1,8 +1,4 @@
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
@@ -14,9 +10,7 @@ export class AtGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.getAllAndOverride('isPublic', [
       context.getHandler(),
       context.getClass(),
@@ -24,10 +18,9 @@ export class AtGuard extends AuthGuard('jwt') {
     return isPublic ? true : super.canActivate(context);
   }
 
-  handleRequest(err: any, user: any, info: { message: string; }) {
+  handleRequest(err: any, user: any, info: { message: string }) {
     if (!err && !user && info) {
-      if (info.message === 'No auth token')
-        throw new UnauthorizedException('expired token');
+      if (info.message === 'No auth token') throw new UnauthorizedException('expired token');
       throw new UnauthorizedException('invalid token');
     }
     return user;

@@ -21,9 +21,8 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   private static extractJWT(req: Request): string | null {
-    if (req.cookies && 'rt' in req.cookies && req.cookies.rt.length > 0)
-      return req.cookies.rt;
-      throw new UnauthorizedException('please log in again');
+    if (req.cookies && 'rt' in req.cookies && req.cookies.rt.length > 0) return req.cookies.rt;
+    throw new UnauthorizedException('please log in again');
   }
 
   async validate(payload: { sub: number; email: string }) {

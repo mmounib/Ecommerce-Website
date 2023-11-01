@@ -34,11 +34,12 @@ model category {
 }
 
 model Product {
-  id         Int       @id @unique
+  id         String    @id @unique
   title      String
   price      String
   image      String[]
   ImageDesc  String[]
+  video      String?
   base       skuBase[]
   props      skuProp[]
   reviews    reviews[]
@@ -58,8 +59,8 @@ model reviews {
   images  String[]
   helpful Int
 
-  ProductId Int
-  Product   Product @relation(fields: [ProductId], references: [id])
+  productId String
+  Product   Product @relation(fields: [productId], references: [id])
 }
 
 model FavouritesList {
@@ -78,7 +79,7 @@ model ShoppingList {
 }
 
 model CardsList {
-  productId      Int
+  productId      String
   product        Product      @relation(fields: [productId], references: [id])
   ShoppingListId Int
   ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
@@ -92,7 +93,7 @@ model FavouriteProducts {
   favouriteId    Int
 
   Product   Product @relation(fields: [productId], references: [id])
-  productId Int
+  productId String
 
   @@id([productId, favouriteId])
 }
@@ -102,20 +103,20 @@ model ShoppingProducts {
   ShoppingId   Int
 
   Product   Product @relation(fields: [productId], references: [id])
-  productId Int
+  productId String
 
   @@id([productId, ShoppingId])
 }
 
 model skuBase {
-  skuId          String  @id
+  skuId          String  @id @default(uuid())
   propMap        String
   price          Float
   promotionPrice Float
   quantity       Int
   ext            String
   Product        Product @relation(fields: [productId], references: [id])
-  productId      Int
+  productId      String
 }
 
 model skuValues {
@@ -124,16 +125,17 @@ model skuValues {
   image    String?
   propTips String
 
-  skuProp    skuProp @relation(fields: [skuPropPid], references: [pid])
-  skuPropPid Int
+  skuProp    skuProp @relation(fields: [skuPropPid], references: [id])
+  skuPropPid String
 }
 
 model skuProp {
-  pid       Int         @id
-  name      String      @unique
+  id        String      @id @default(uuid())
+  pid       Int
+  name      String
   values    skuValues[]
   Product   Product     @relation(fields: [productId], references: [id])
-  productId Int
+  productId String
 }
 
 model revocatedTokens {

@@ -23,11 +23,12 @@ CREATE TABLE "category" (
 
 -- CreateTable
 CREATE TABLE "Product" (
-    "id" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "price" TEXT NOT NULL,
     "image" TEXT[],
     "ImageDesc" TEXT[],
+    "video" TEXT,
     "categoryId" INTEGER NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
@@ -41,7 +42,7 @@ CREATE TABLE "reviews" (
     "stars" INTEGER NOT NULL,
     "images" TEXT[],
     "helpful" INTEGER NOT NULL,
-    "ProductId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
@@ -64,7 +65,7 @@ CREATE TABLE "ShoppingList" (
 
 -- CreateTable
 CREATE TABLE "CardsList" (
-    "productId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
     "ShoppingListId" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL DEFAULT 1,
 
@@ -74,7 +75,7 @@ CREATE TABLE "CardsList" (
 -- CreateTable
 CREATE TABLE "FavouriteProducts" (
     "favouriteId" INTEGER NOT NULL,
-    "productId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
 
     CONSTRAINT "FavouriteProducts_pkey" PRIMARY KEY ("productId","favouriteId")
 );
@@ -82,7 +83,7 @@ CREATE TABLE "FavouriteProducts" (
 -- CreateTable
 CREATE TABLE "ShoppingProducts" (
     "ShoppingId" INTEGER NOT NULL,
-    "productId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
 
     CONSTRAINT "ShoppingProducts_pkey" PRIMARY KEY ("productId","ShoppingId")
 );
@@ -95,7 +96,7 @@ CREATE TABLE "skuBase" (
     "promotionPrice" DOUBLE PRECISION NOT NULL,
     "quantity" INTEGER NOT NULL,
     "ext" TEXT NOT NULL,
-    "productId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
 
     CONSTRAINT "skuBase_pkey" PRIMARY KEY ("skuId")
 );
@@ -115,7 +116,7 @@ CREATE TABLE "skuValues" (
 CREATE TABLE "skuProp" (
     "pid" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
-    "productId" INTEGER NOT NULL,
+    "productId" TEXT NOT NULL,
 
     CONSTRAINT "skuProp_pkey" PRIMARY KEY ("pid")
 );
@@ -164,7 +165,7 @@ CREATE UNIQUE INDEX "revocatedTokens_token_key" ON "revocatedTokens"("token");
 ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "reviews" ADD CONSTRAINT "reviews_ProductId_fkey" FOREIGN KEY ("ProductId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "FavouritesList" ADD CONSTRAINT "FavouritesList_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
