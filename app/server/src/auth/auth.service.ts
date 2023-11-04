@@ -11,7 +11,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Tokens } from './Types';
+import { Tokens } from '../Types';
 import { Response } from 'express';
 
 @Injectable()
@@ -45,8 +45,7 @@ export class AuthService {
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002')
-          throw new ForbiddenException('Credentials taken');
+        if (error.code === 'P2002') throw new ForbiddenException('Credentials taken');
       }
       throw error;
     }
@@ -109,8 +108,7 @@ export class AuthService {
       });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002')
-          throw new ForbiddenException('Credentials taken');
+        if (error.code === 'P2002') throw new ForbiddenException('Credentials taken');
       }
       throw error;
     }
@@ -122,8 +120,7 @@ export class AuthService {
         id: userId,
       },
     });
-    if (!user || !user.hashedRt)
-      throw new UnauthorizedException('invalid token');
+    if (!user || !user.hashedRt) throw new UnauthorizedException('invalid token');
     const rtMatches = await argon.verify(user.hashedRt, rt);
     if (!rtMatches) throw new UnauthorizedException('invalid token');
     const token = await this.newAccessToken(user.id, user.email);
@@ -182,10 +179,7 @@ export class AuthService {
     });
   }
 
-  setCookies(
-    res: Response,
-    tokens: { accessToken: string; refreshToken: string },
-  ) {
+  setCookies(res: Response, tokens: { accessToken: string; refreshToken: string }) {
     this.setCookie(res, {
       name: 'at',
       value: tokens.accessToken,

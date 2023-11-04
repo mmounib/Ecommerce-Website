@@ -42,6 +42,12 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request) {
+    const isRevocated = await this.prisma.revocatedTokens.findUnique({
+      where: {
+        token: req.cookies.at,
+      },
+    });
+    if (isRevocated) throw new UnauthorizedException('invalid token');
     return this.authService.logout(req.user['sub'], req.cookies.at);
   }
 
@@ -61,10 +67,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refreshTokens(@Req() req: Request, @Res() res: Response) {
-    const token = await this.authService.refreshTokens(
-      req.user['sub'],
-      req.cookies.rt,
-    );
+    const token = await this.authService.refreshTokens(req.user['sub'], req.cookies.rt);
     this.authService.setCookie(res, token);
     return res.status(HttpStatus.OK).send();
   }

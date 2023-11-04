@@ -40,12 +40,7 @@ describe('AppController (e2e)', () => {
       };
       describe('signup', () => {
         it('should signup', () => {
-          return pactum
-            .spec()
-            .post('/auth/signup')
-            .withBody(dtoSignUp)
-            .expectStatus(201)
-            .inspect();
+          return pactum.spec().post('/auth/signup').withBody(dtoSignUp).expectStatus(201).inspect();
           // .stores('AccessToken', 'access_token');
         });
       });
