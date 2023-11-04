@@ -1,12 +1,8 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from './prisma/prisma.service';
-import { Product, skuBase, skuProp } from './Types';
+import { skuBase, skuProp } from './Types';
 import { ConfigService } from '@nestjs/config';
-import { reviews } from './Types/types';
-import { skuValues } from '@prisma/client';
-const util = require('util');
-const setTimeoutPromise = util.promisify(setTimeout);
 
 @Injectable()
 export class AppService {
@@ -47,9 +43,10 @@ export class AppService {
       },
     ];
 
-    // for (const item of data) {
-    await this.getCategoryProducts(data[0]);
-    // }
+    for (const item of data) {
+      console.log(`Starting processing category: ${item.categoryName}`);
+      await this.getCategoryProducts(item);
+    }
   }
   async getProductDetails(productId: number) {
     const options = {
@@ -62,16 +59,20 @@ export class AppService {
     };
 
     try {
-      console.log('getting product details....');
       const response = await axios.request(options);
-      if (response.data) console.log('fetching successfully');
       return response.data?.result?.item;
     } catch (error) {
-      console.log(error);
+      options.headers['X-RapidAPI-Key'] = this.config.get('API_KEY2');
+      const response = await this.reRequest(options);
+      return response.data?.result?.item;
     }
   }
 
   async createProduct(productDetails: any, categoryId: number) {
+    for (let i = 0; productDetails.images && i < productDetails.images.length; i++)
+      productDetails.images[i] = productDetails.images[i].slice(2);
+    for (let i = 0; productDetails.description.images && i < productDetails.description.images.length; i++)
+      productDetails.description.images[i] = productDetails.description.images[i].slice(2);
     try {
       await this.prisma.product.create({
         data: {
@@ -80,7 +81,7 @@ export class AppService {
           price: String(productDetails.sku.def.price),
           image: productDetails.images,
           ImageDesc: productDetails.description.images,
-          video: productDetails.video?.url,
+          video: productDetails.video?.url.slice(2),
           category: {
             connect: {
               id: categoryId,
@@ -90,76 +91,85 @@ export class AppService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async createProductSkuBase(productDetails: any) {
-    await Promise.all(
-      productDetails.sku.base.map(async (item: skuBase) => {
-        try {
-          await this.prisma.skuBase.create({
-            data: {
-              propMap: item.propMap,
-              price: item.price,
-              promotionPrice: item.promotionPrice,
-              quantity: item.quantity,
-              ext: item.ext,
-              productId: productDetails.itemId,
-            },
-          });
-        } catch (error) {
-          console.error(`Error creating skuBase: ${error.message}`);
-          throw new InternalServerErrorException('Internal Server Error');
-        }
-      }),
-    );
+    if (productDetails.sku?.base) {
+      await Promise.all(
+        productDetails.sku.base.map(async (item: skuBase) => {
+          try {
+            await this.prisma.skuBase.create({
+              data: {
+                propMap: item.propMap,
+                price: item.price,
+                promotionPrice: item.promotionPrice,
+                quantity: item.quantity,
+                ext: item.ext,
+                products: {
+                  create: {
+                    productId: productDetails.itemId,
+                  },
+                },
+              },
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }),
+      );
+    }
   }
 
   async createProductSkuProp(productDetails: any) {
     try {
-      this.skuProp = await Promise.all(
-        productDetails.sku.props.map(async (item: skuProp) => {
-          return await this.prisma.skuProp.create({
-            data: {
-              pid: item.pid,
-              name: item.name,
-              productId: productDetails.itemId,
-            },
-          });
-        }),
-      );
+      if (productDetails.sku?.props) {
+        this.skuProp = await Promise.all(
+          productDetails.sku.props.map(async (item: skuProp) => {
+            return await this.prisma.skuProp.create({
+              data: {
+                pid: item.pid,
+                name: item.name,
+                productId: productDetails.itemId,
+              },
+            });
+          }),
+        );
+      }
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async createProductSkuValues(productDetails: any) {
     let idx = -1;
     try {
-      await Promise.all(
-        productDetails.sku.props.map(async (item: skuProp) => {
-          await Promise.all(
-            item.values?.map(async (value) => {
-              idx++;
-              console.log(idx, this.skuProp[idx]);
-              return this.prisma.skuValues.create({
-                data: {
-                  vid: value.vid,
-                  name: value.name,
-                  propTips: value.propTips,
-                  image: value.image,
-                  skuPropPid: this.skuProp[idx].id,
-                },
-              });
-            }),
-          );
-        }),
-      );
+      if (productDetails.sku?.props) {
+        await Promise.all(
+          productDetails.sku?.props?.map(async (item: skuProp) => {
+            idx++;
+            if (item.values) {
+              await Promise.all(
+                item.values?.map(async (value) => {
+                  try {
+                    return await this.prisma.skuValues.create({
+                      data: {
+                        vid: value.vid,
+                        name: value.name,
+                        propTips: value.propTips,
+                        image: value.image.slice(2),
+                        skuPropPid: this.skuProp[idx].id,
+                      },
+                    });
+                  } catch (error) {}
+                }),
+              );
+            }
+          }),
+        );
+      }
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
@@ -167,6 +177,7 @@ export class AppService {
     try {
       await Promise.all(
         productReviews.map(async (item) => {
+          for (let i = 0; item.images && i < item.images.length; i++) item.images[i] = item.images[i].slice(2);
           await this.prisma.reviews.create({
             data: {
               Date: item.Date,
@@ -181,7 +192,6 @@ export class AppService {
       );
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
@@ -214,22 +224,21 @@ export class AppService {
     };
 
     try {
-      console.log('getting product reviews....');
       const response = await axios.request(options);
-      if (response.data.result) console.log('fetching successfully');
       return response.data.result.resultList;
     } catch (error) {
-      console.log('null');
+      options.headers['X-RapidAPI-Key'] = this.config.get('API_KEY2');
+      const response = await this.reRequest(options);
+      return response.data.result.resultList;
     }
   }
 
   async requestProductsReviews(response) {
     console.log('requestProductsReviews is called');
     if (this.index < response.length) {
-      console.log(this.index, response.length);
       const product = response[this.index];
-      await this.getAndStoreReviews(product.item.itemId);
       this.index++;
+      await this.getAndStoreReviews(product.item.itemId);
     } else {
       // All requests are completed
       this.index = 0;
@@ -237,31 +246,41 @@ export class AppService {
     }
   }
 
-  requestProductsDetails = async (
+  async requestProductsDetails(
     response: any[],
     reviewTimer: NodeJS.Timeout,
     categoryId: number,
-  ) => {
+    resolve,
+  ) {
     console.log('requestProductsDetails is called');
     if (this.index < response.length) {
-      console.log(this.index, response.length);
       const product = response[this.index];
-      await this.getAndStoreProduct(product.item.itemId, categoryId);
       this.index++;
+      await this.getAndStoreProduct(product.item.itemId, categoryId);
     } else {
       // All requests are completed
+      this.index = 0;
+      this.firstIntervalRunning = true;
       console.log('all requests are completed');
       clearInterval(reviewTimer);
+      resolve();
     }
-  };
+  }
 
   async getCategoryProducts(category: {
     categoryName: string;
     search: string;
     categoryDesc: string;
   }) {
-    const requestInterval = 2000;
+    const requestInterval = 1700;
     let reviewTimer: NodeJS.Timeout;
+
+    const categoryFind = await this.prisma.category.findFirst({
+      where: {
+        type: category.categoryName
+      }
+    })
+    if (categoryFind) return;
 
     try {
       const response = await this.fetchCategoryData(category.search);
@@ -271,20 +290,31 @@ export class AppService {
           description: category.categoryDesc,
         },
       });
+      await this.setIntervalWithPromise(requestInterval, reviewTimer, response, categoryDB.id);
+    } catch (error) {
+      console.log('null2');
+    }
+  }
+
+  setIntervalWithPromise(
+    requestInterval: number,
+    reviewTimer: NodeJS.Timeout,
+    response: any,
+    categoryId: number,
+  ) {
+    return new Promise((resolve) => {
       const requestTimer = setInterval(() => {
         if (this.firstIntervalRunning) {
           this.requestProductsReviews(response);
         } else {
           clearInterval(requestTimer);
           reviewTimer = setInterval(
-            () => this.requestProductsDetails(response, reviewTimer, categoryDB.id),
+            () => this.requestProductsDetails(response, reviewTimer, categoryId, resolve),
             requestInterval,
           );
         }
       }, requestInterval);
-    } catch (error) {
-      console.log('null2');
-    }
+    });
   }
 
   private async fetchCategoryData(searchQuery: string) {
@@ -303,13 +333,31 @@ export class AppService {
       if (response.data) console.log('fetching successfully');
       return response.data.result.resultList;
     } catch (error) {
-      console.log('NULL');
+      options.headers['X-RapidAPI-Key'] = this.config.get('API_KEY2');
+      const response = await this.reRequest(options);
+      return response.data.result.resultList;
     }
   }
 
-  private getApiHeaders() {
+  async reRequest(options: {
+    method: string;
+    url: string;
+    params: any;
+    headers: {
+      'X-RapidAPI-Key': string;
+      'X-RapidAPI-Host': string;
+    };
+  }) {
+    try {
+      return await axios.request(options);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getApiHeaders() {
     return {
-      'X-RapidAPI-Key': this.config.get('APY_KEY'),
+      'X-RapidAPI-Key': this.config.get('API_KEY1'),
       'X-RapidAPI-Host': 'aliexpress-datahub.p.rapidapi.com',
     };
   }

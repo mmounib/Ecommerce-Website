@@ -103,22 +103,24 @@ CREATE TABLE "skuBase" (
 
 -- CreateTable
 CREATE TABLE "skuValues" (
+    "id" TEXT NOT NULL,
     "vid" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT,
     "propTips" TEXT NOT NULL,
-    "skuPropPid" INTEGER NOT NULL,
+    "skuPropPid" TEXT NOT NULL,
 
-    CONSTRAINT "skuValues_pkey" PRIMARY KEY ("vid")
+    CONSTRAINT "skuValues_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "skuProp" (
+    "id" TEXT NOT NULL,
     "pid" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
 
-    CONSTRAINT "skuProp_pkey" PRIMARY KEY ("pid")
+    CONSTRAINT "skuProp_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -154,9 +156,6 @@ CREATE UNIQUE INDEX "ShoppingList_userId_key" ON "ShoppingList"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "skuValues_name_key" ON "skuValues"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "skuProp_name_key" ON "skuProp"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "revocatedTokens_token_key" ON "revocatedTokens"("token");
@@ -195,7 +194,7 @@ ALTER TABLE "ShoppingProducts" ADD CONSTRAINT "ShoppingProducts_productId_fkey" 
 ALTER TABLE "skuBase" ADD CONSTRAINT "skuBase_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "skuValues" ADD CONSTRAINT "skuValues_skuPropPid_fkey" FOREIGN KEY ("skuPropPid") REFERENCES "skuProp"("pid") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "skuValues" ADD CONSTRAINT "skuValues_skuPropPid_fkey" FOREIGN KEY ("skuPropPid") REFERENCES "skuProp"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "skuProp" ADD CONSTRAINT "skuProp_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

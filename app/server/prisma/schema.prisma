@@ -40,7 +40,7 @@ model Product {
   image      String[]
   ImageDesc  String[]
   video      String?
-  base       skuBase[]
+  base       skuBaseProducts[]
   props      skuProp[]
   reviews    reviews[]
   categoryId Int
@@ -112,15 +112,25 @@ model skuBase {
   skuId          String  @id @default(uuid())
   propMap        String
   price          Float
-  promotionPrice Float
+  promotionPrice Float?
   quantity       Int
   ext            String
-  Product        Product @relation(fields: [productId], references: [id])
-  productId      String
+  products      skuBaseProducts[]
+}
+
+model skuBaseProducts {
+  skuBase skuBase @relation(fields: [skuBaseId], references: [skuId])
+  skuBaseId   String
+
+  Product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@id([productId, skuBaseId])
 }
 
 model skuValues {
-  vid      Int     @id
+  id       String  @id @default(uuid())
+  vid      Int
   name     String  @unique
   image    String?
   propTips String
