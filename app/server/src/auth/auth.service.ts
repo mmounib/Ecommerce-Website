@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto, LoginDto } from './dto';
 import * as argon from 'argon2';
@@ -21,6 +15,13 @@ export class AuthService {
     private jwtService: JwtService,
     private config: ConfigService,
   ) {}
+
+  async validateUser(userDetails: {
+    accessToken: string;
+    refreshToken: string;
+    email: string;
+    username: string;
+  }) {}
 
   async signup(dto: AuthDto) {
     // generate the password hash

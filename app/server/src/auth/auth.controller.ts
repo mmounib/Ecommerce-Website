@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, LoginDto } from './dto';
-import { AtGuard, RtGuard } from '../common/guards';
+import { AtGuard, GoogleAuthGuard, RtGuard } from '../common/guards';
 import { Request, Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -21,7 +21,13 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly prisma: PrismaService,
-  ) {}
+  ) { }
+  
+  @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
+  googleLogin(@Req() req: Request) {
+
+  }
 
   @Post('signup')
   async signup(@Body() dto: AuthDto, @Res() res: Response) {
