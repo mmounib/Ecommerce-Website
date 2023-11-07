@@ -1,14 +1,14 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
-import { Inject, Injectable } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     config: ConfigService,
-    @Inject('AUTH_SERVICE') private readonly authService: AuthService,
+    private readonly prisma: PrismaService,
   ) {
     super({
       clientID: config.get('CLIENT_ID'),
@@ -19,14 +19,37 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log(accessToken);
-    console.log(refreshToken);
-    console.log(profile);
-    this.authService.validateUser({
+    const user = await this.validateUser({
       accessToken: accessToken,
       refreshToken: refreshToken,
       email: profile.emails[0].value,
       username: profile.displayName,
     });
+    return user || null;
   }
+
+  async validateUser(userDetails: {
+    accessToken: string;
+    refreshToken: string;
+    email: string;
+    username: string;
+  }) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: userDetails.email,
+      },
+    });
+  
+    const result = user
+      ? { id: user.id, email: user.email }
+      : await this.prisma.user.create({
+          data: {
+            email: userDetails.email,
+            username: userDetails.username,
+          },
+        });
+  
+    return { id: result.id, email: result.email };
+  }
+  
 }

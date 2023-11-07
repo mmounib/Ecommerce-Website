@@ -11,14 +11,14 @@ datasource db {
 }
 
 model user {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   email    String  @unique
   address  String?
-  username String  @unique
-  hash     String
+  username String
+  hash     String?
   hashedRt String?
 
   cards      ShoppingList?
@@ -26,7 +26,7 @@ model user {
 }
 
 model category {
-  id          Int    @id @default(autoincrement())
+  id          String @id @default(uuid())
   type        String @unique
   description String
 
@@ -34,7 +34,7 @@ model category {
 }
 
 model Product {
-  id         String    @id @unique
+  id         String            @id @unique
   title      String
   price      String
   image      String[]
@@ -43,8 +43,8 @@ model Product {
   base       skuBaseProducts[]
   props      skuProp[]
   reviews    reviews[]
-  categoryId Int
-  category   category  @relation(fields: [categoryId], references: [id])
+  categoryId String
+  category   category          @relation(fields: [categoryId], references: [id])
 
   productFavourite FavouriteProducts[]
   productShopping  ShoppingProducts[]
@@ -52,7 +52,7 @@ model Product {
 }
 
 model reviews {
-  id      Int      @id @default(autoincrement())
+  id      String   @id @default(uuid())
   Date    String
   content String
   stars   Int
@@ -64,15 +64,15 @@ model reviews {
 }
 
 model FavouritesList {
-  id      Int                 @id @unique @default(autoincrement())
-  userId  Int                 @unique
+  id      String              @id @default(uuid())
+  userId  String                 @unique
   user    user                @relation(fields: [userId], references: [id])
   product FavouriteProducts[]
 }
 
 model ShoppingList {
-  id               Int                @id @unique @default(autoincrement())
-  userId           Int                @unique
+  id               String             @id @default(uuid())
+  userId           String                @unique
   user             user               @relation(fields: [userId], references: [id])
   product          CardsList[]
   ShoppingProducts ShoppingProducts[]
@@ -81,7 +81,7 @@ model ShoppingList {
 model CardsList {
   productId      String
   product        Product      @relation(fields: [productId], references: [id])
-  ShoppingListId Int
+  ShoppingListId String
   ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
   quantity       Int          @default(1)
 
@@ -90,7 +90,7 @@ model CardsList {
 
 model FavouriteProducts {
   FavouritesList FavouritesList @relation(fields: [favouriteId], references: [id])
-  favouriteId    Int
+  favouriteId    String
 
   Product   Product @relation(fields: [productId], references: [id])
   productId String
@@ -100,7 +100,7 @@ model FavouriteProducts {
 
 model ShoppingProducts {
   ShoppingList ShoppingList @relation(fields: [ShoppingId], references: [id])
-  ShoppingId   Int
+  ShoppingId   String
 
   Product   Product @relation(fields: [productId], references: [id])
   productId String
@@ -109,18 +109,18 @@ model ShoppingProducts {
 }
 
 model skuBase {
-  skuId          String  @id @default(uuid())
+  skuId          String            @id @default(uuid())
   propMap        String
   price          Float
   promotionPrice Float?
   quantity       Int
   ext            String
-  products      skuBaseProducts[]
+  products       skuBaseProducts[]
 }
 
 model skuBaseProducts {
-  skuBase skuBase @relation(fields: [skuBaseId], references: [skuId])
-  skuBaseId   String
+  skuBase   skuBase @relation(fields: [skuBaseId], references: [skuId])
+  skuBaseId String
 
   Product   Product @relation(fields: [productId], references: [id])
   productId String

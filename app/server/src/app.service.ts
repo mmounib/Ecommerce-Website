@@ -68,7 +68,7 @@ export class AppService {
     }
   }
 
-  async createProduct(productDetails: any, categoryId: number) {
+  async createProduct(productDetails: any, categoryId: string) {
     for (let i = 0; productDetails.images && i < productDetails.images.length; i++)
       productDetails.images[i] = productDetails.images[i].slice(2);
     for (let i = 0; productDetails.description.images && i < productDetails.description.images.length; i++)
@@ -195,7 +195,7 @@ export class AppService {
     }
   }
 
-  async getAndStoreProduct(productId: number, categoryId: number) {
+  async getAndStoreProduct(productId: number, categoryId: string) {
     const productDetails = await this.getProductDetails(productId);
     if (productDetails) {
       await this.createProduct(productDetails, categoryId);
@@ -249,7 +249,7 @@ export class AppService {
   async requestProductsDetails(
     response: any[],
     reviewTimer: NodeJS.Timeout,
-    categoryId: number,
+    categoryId: string,
     resolve,
   ) {
     console.log('requestProductsDetails is called');
@@ -300,7 +300,7 @@ export class AppService {
     requestInterval: number,
     reviewTimer: NodeJS.Timeout,
     response: any,
-    categoryId: number,
+    categoryId: string,
   ) {
     return new Promise((resolve) => {
       const requestTimer = setInterval(() => {
