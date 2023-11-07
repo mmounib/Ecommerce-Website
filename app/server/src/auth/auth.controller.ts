@@ -23,6 +23,23 @@ export class AuthController {
     private readonly prisma: PrismaService,
   ) {}
 
+  @Get('google/login')
+  @UseGuards(AtGuard)
+  googleLogin() {}
+
+  @Get('google/callback')
+  @UseGuards(AtGuard)
+  async handleRedirect(@Req() req: Request, @Res() res: Response) {
+    if (!req.user) throw new UnauthorizedException('invalid token');
+    const [accessToken, refreshToken] = await Promise.all([
+      this.authService.newAccessToken(req.user['id'], req.user['email']),
+      this.authService.newRefreshToken(req.user['id'], req.user['email']),
+    ]);
+    await this.authService.updateRtHash(req.user['id'], refreshToken);
+    this.authService.setCookies(res, { accessToken, refreshToken });
+    return res.status(HttpStatus.OK).send();
+  }
+
   @Post('signup')
   async signup(@Body() dto: AuthDto, @Res() res: Response) {
     const tokens = await this.authService.signup(dto);
@@ -48,7 +65,7 @@ export class AuthController {
       },
     });
     if (isRevocated) throw new UnauthorizedException('invalid token');
-    return this.authService.logout(req.user['sub'], req.cookies.at);
+    return this.authService.logout(req.user['id'], req.cookies.at);
   }
 
   @UseGuards(AtGuard)
@@ -60,14 +77,14 @@ export class AuthController {
       },
     });
     if (isRevocated) throw new UnauthorizedException('invalid token');
-    return this.authService.getData(req.user['sub']);
+    return this.authService.getData(req.user['id']);
   }
 
   @UseGuards(RtGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refreshTokens(@Req() req: Request, @Res() res: Response) {
-    const token = await this.authService.refreshTokens(req.user['sub'], req.cookies.rt);
+    const token = await this.authService.refreshTokens(req.user['id'], req.cookies.rt);
     this.authService.setCookie(res, token);
     return res.status(HttpStatus.OK).send();
   }

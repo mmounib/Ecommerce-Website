@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto, LoginDto } from './dto';
 import * as argon from 'argon2';
@@ -75,7 +69,7 @@ export class AuthService {
     };
   }
 
-  async getData(userId: number) {
+  async getData(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -88,7 +82,7 @@ export class AuthService {
     return user;
   }
 
-  async logout(userId: number, token: string) {
+  async logout(userId: string, token: string) {
     await this.prisma.user.updateMany({
       where: {
         id: userId,
@@ -114,7 +108,7 @@ export class AuthService {
     }
   }
 
-  async refreshTokens(userId: number, rt: string) {
+  async refreshTokens(userId: string, rt: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -131,10 +125,10 @@ export class AuthService {
     };
   }
 
-  async newAccessToken(userId: number, email: string) {
+  async newAccessToken(userId: string, email: string) {
     return await this.jwtService.signAsync(
       {
-        sub: userId,
+        id: userId,
         email,
       },
       {
@@ -144,10 +138,10 @@ export class AuthService {
     );
   }
 
-  async newRefreshToken(userId: number, email: string) {
+  async newRefreshToken(userId: string, email: string) {
     return await this.jwtService.signAsync(
       {
-        sub: userId,
+        id: userId,
         email,
       },
       {
@@ -157,7 +151,7 @@ export class AuthService {
     );
   }
 
-  async updateRtHash(userId: number, rt: string) {
+  async updateRtHash(userId: string, rt: string) {
     const hash = await argon.hash(rt);
     await this.prisma.user.update({
       where: {
