@@ -6,7 +6,8 @@ import CustomerReview from "./customerReview";
 import PriceField from "./priceField";
 import { priceRange } from "../../interfaces";
 import { useRequest } from "../../Hooks/useRequest";
-import { FilterdData, Product } from "../../../../server/dist/Types/types";
+import { Product } from "../../../../server/dist/Types/types";
+import { FilterdData } from "../../interfaces";
 
 export default function Category() {
 	const category = useRef<string>("");

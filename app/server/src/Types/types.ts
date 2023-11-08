@@ -1,6 +1,3 @@
-import { AnyARecord } from 'dns';
-import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
-
 export type Tokens = {
   name: string;
   value: string;
@@ -55,4 +52,10 @@ export type Product = {
   base: skuBase[];
   props: skuProp[];
   reviews: reviews[];
+};
+
+export type FilterdData = {
+  stars: string;
+  priceStart: string;
+  priceEnd: string;
 };
