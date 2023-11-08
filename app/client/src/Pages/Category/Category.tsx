@@ -1,71 +1,112 @@
-import { Link, useLocation } from 'react-router-dom'
-import {data} from "../../Components/categoryProducts.json"
-import { useEffect, useRef, useState } from 'react';
-import { useEffectOnUpdate } from '../../Hooks/useEffectOnUpdate';
-import axios from 'axios';
-import CustomerReview from './customerReview';
-import PriceField from './priceField';
-import {priceRange} from "../../interfaces"
-
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
+import { AxiosRequestConfig } from "axios";
+import CustomerReview from "./customerReview";
+import PriceField from "./priceField";
+import { priceRange } from "../../interfaces";
+import { useRequest } from "../../Hooks/useRequest";
+import { FilterdData, Product } from "../../../../server/dist/Types/types";
 
 export default function Category() {
-  const category = useRef<string>('')
-  const [reviewRange, setReviewRange] = useState<number>(0)
-  const [priceRange, setPriceRange] = useState<priceRange>({priceStart: '', priceEnd: ''})
-  const {pathname} = useLocation()
-  const match = pathname.match(/\/category\/(.+)/);
-  if (match)
-    category.current = match[1];
+	const category = useRef<string>("");
+	const [products, setProducts] = useState<Product[]>([]);
+	const [reviewRange, setReviewRange] = useState<number>(0);
+	const reset = useRef<boolean>(false);
+	const [priceRange, setPriceRange] = useState<priceRange>({
+		priceStart: "",
+		priceEnd: "",
+	});
+	const { pathname } = useLocation();
+	const match = pathname.match(/\/category\/(.+)/);
+	if (match) category.current = match[1];
 
-  function resetInputs() {
-    setReviewRange(0)
-    setPriceRange({priceStart: '', priceEnd: ''})
-  }
+	function resetInputs() {
+		setReviewRange(0);
+		setPriceRange({ priceStart: "", priceEnd: "" });
+		reset.current = !reset.current;
+	}
 
-  useEffect(() => {
-    resetInputs()
-  }, [category.current])
+	useEffect(() => {
+		resetInputs();
+	}, [category.current]);
 
-  function newData() {
-    console.log('ok');
-  }
+	async function newData() {
+		const data: FilterdData = {
+			stars: reviewRange,
+			priceStart: priceRange.priceStart === "" ? "0" : priceRange.priceStart,
+			priceEnd: priceRange.priceEnd === "" ? "99999999" : priceRange.priceEnd,
+		};
+		const opt: AxiosRequestConfig = {
+			url: `/api/product/${category.current}`,
+			data,
+			method: "PATCH",
+		};
+		const res = await useRequest(opt);
+		console.log(res?.data);
+		const response = res?.data as Product[];
+		setProducts(response);
+	}
 
-  // useEffectOnUpdate(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //         const res = await axios.get('')
-  //     }
-  //     catch (err) {
-  //       console.log(err);
-  //     }
-  //   }
-  //   void fetchProducts()
-  // }, [category.current, reviewRange])
+	useEffectOnUpdate(() => {
+		const fetchProducts = async () => {
+			try {
+				const opt: AxiosRequestConfig = {
+					url: `/api/product/${category.current}`,
+					method: "GET",
+				};
+				const res = await useRequest(opt);
+				const data = res?.data.products as Product[];
+				setProducts(data);
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		void fetchProducts();
+	}, [category.current, reviewRange, reset.current]);
 
-  const productsList = data.map(item => {
-    return (
-      <div className='product flex flex-col gap-4' key={item.itemId}>
-        <Link to={`/product/${item.itemId}`}><img className='productCard w-64 h-96 rounded-lg' src={item.image} alt='' /></Link>
-        <div>
-          <h1 className='text-lg font-semibold'>{item.title}</h1>
-          <p className='text-violet-800 font-medium'>{item.price}.00MAD</p>
-        </div>
-      </div>
-    )
-  })
-  return (
-    <section className='flex flex-col lg:flex-row w-10/12 justify-between gap-16 py-24'>
-      <div className='filter lg:w-1/4 flex flex-col gap-4'>
-        <div className='flex justify-between'>
-          <p className='font-semibold text-xl'>Filter:</p>
-          <p className='font-medium cursor-pointer' onClick={resetInputs}>Reset all</p>
-        </div>
-        <CustomerReview setReviewRange={setReviewRange} reviewRange={reviewRange} />
-        <PriceField priceRange={priceRange} setPriceRange={setPriceRange} fetchData={newData} />
-      </div>
-      <div className='flex lg:w-3/4 flex-wrap gap-8 justify-center'>
-        {productsList}
-      </div>
-    </section>
-  )
+	const productsList = products.map((item) => {
+		return (
+			<div className="product flex flex-col gap-4" key={item.id}>
+				<Link to={`/product/${item.id}`}>
+					<img
+						className="productCard w-64 h-96 rounded-lg"
+						src={`https://${item.image[0]}`}
+						alt=""
+					/>
+				</Link>
+				<div>
+					<h1 className="text-lg font-semibold">{`${item.title.substring(
+						0,
+						20
+					)}...`}</h1>
+					<p className="text-violet-800 font-medium">{item.price}</p>
+				</div>
+			</div>
+		);
+	});
+	return (
+		<section className="flex flex-col lg:flex-row w-10/12 justify-between gap-16 py-24">
+			<div className="filter lg:w-1/4 flex flex-col gap-4">
+				<div className="flex justify-between">
+					<p className="font-semibold text-xl">Filter:</p>
+					<p className="font-medium cursor-pointer" onClick={resetInputs}>
+						Reset all
+					</p>
+				</div>
+				<CustomerReview
+					setReviewRange={setReviewRange}
+					reviewRange={reviewRange}
+				/>
+				<PriceField
+					priceRange={priceRange}
+					setPriceRange={setPriceRange}
+					fetchData={newData}
+				/>
+			</div>
+			<div className="flex lg:w-3/4 flex-wrap gap-8 justify-center">
+				{productsList}
+			</div>
+		</section>
+	);
 }
