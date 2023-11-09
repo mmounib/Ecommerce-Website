@@ -1,17 +1,11 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto, LoginDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Tokens } from './Types';
+import { Tokens } from '../Types';
 import { Response } from 'express';
 
 @Injectable()
@@ -47,8 +41,7 @@ export class AuthService {
       return '';
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002')
-          throw new ForbiddenException('Credentials taken');
+        if (error.code === 'P2002') throw new ForbiddenException('Credentials taken');
       }
       throw error;
     }
@@ -77,7 +70,7 @@ export class AuthService {
     return '';
   }
 
-  async getData(userId: number) {
+  async getData(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -90,7 +83,7 @@ export class AuthService {
     return user;
   }
 
-  async logout(userId: number, token: string) {
+  async logout(userId: string, token: string) {
     await this.prisma.user.updateMany({
       where: {
         id: userId,
@@ -110,21 +103,19 @@ export class AuthService {
       });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002')
-          throw new ForbiddenException('Credentials taken');
+        if (error.code === 'P2002') throw new ForbiddenException('Credentials taken');
       }
       throw error;
     }
   }
 
-  async refreshTokens(userId: number, rt: string) {
+  async refreshTokens(userId: string, rt: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
     });
-    if (!user || !user.hashedRt)
-      throw new UnauthorizedException('invalid token');
+    if (!user || !user.hashedRt) throw new UnauthorizedException('invalid token');
     const rtMatches = await argon.verify(user.hashedRt, rt);
     if (!rtMatches) throw new UnauthorizedException('invalid token');
     const token = await this.newAccessToken(user.id, user.email);
@@ -135,10 +126,10 @@ export class AuthService {
     };
   }
 
-  async newAccessToken(userId: number, email: string) {
+  async newAccessToken(userId: string, email: string) {
     return await this.jwtService.signAsync(
       {
-        sub: userId,
+        id: userId,
         email,
       },
       {
@@ -148,10 +139,10 @@ export class AuthService {
     );
   }
 
-  async newRefreshToken(userId: number, email: string) {
+  async newRefreshToken(userId: string, email: string) {
     return await this.jwtService.signAsync(
       {
-        sub: userId,
+        id: userId,
         email,
       },
       {
@@ -161,7 +152,7 @@ export class AuthService {
     );
   }
 
-  async updateRtHash(userId: number, rt: string) {
+  async updateRtHash(userId: string, rt: string) {
     const hash = await argon.hash(rt);
     await this.prisma.user.update({
       where: {
@@ -183,10 +174,7 @@ export class AuthService {
     });
   }
 
-  setCookies(
-    res: Response,
-    tokens: { accessToken: string; refreshToken: string },
-  ) {
+  setCookies(res: Response, tokens: { accessToken: string; refreshToken: string }) {
     this.setCookie(res, {
       name: 'at',
       value: tokens.accessToken,

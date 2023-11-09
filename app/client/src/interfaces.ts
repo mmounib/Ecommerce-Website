@@ -11,3 +11,18 @@ export interface CustomError {
 	};
 	config?: any;
 }
+
+export interface FilterdData {
+	stars: number;
+	priceStart: string;
+	priceEnd: string;
+}
+
+export interface User {
+	id: string;
+	username: string;
+	email: string;
+	address?: string;
+	cards?: any;
+	favourite?: any;
+}
