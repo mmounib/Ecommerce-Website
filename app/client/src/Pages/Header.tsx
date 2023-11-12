@@ -70,8 +70,6 @@ export default function Header() {
 
   const [number, setNumber] = useState<number>(1);
 
-  console.log(user)
-  
 	const totalPrice = 500;
 
 	const products = data.map((item) => {

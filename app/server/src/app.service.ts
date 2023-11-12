@@ -277,9 +277,9 @@ export class AppService {
 
     const categoryFind = await this.prisma.category.findFirst({
       where: {
-        type: category.categoryName
-      }
-    })
+        type: category.categoryName,
+      },
+    });
     if (categoryFind) return;
 
     try {

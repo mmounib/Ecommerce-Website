@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FilterdData } from './dto';
 
@@ -17,5 +17,10 @@ export class ProductController {
     @Body() filterData: FilterdData,
   ) {
     return await this.productService.filtredProducts(categoryName, filterData);
+  }
+
+  @Get('productId/:id')
+  async getProduct(@Param('id') id: string) {
+    return await this.productService.getProduct(id);
   }
 }

@@ -14,7 +14,6 @@ export class ProductService {
         products: true,
       },
     });
-    console.log(products);
     return products;
   }
 
@@ -52,5 +51,23 @@ export class ProductService {
         firstValue >= Number(filteredData.priceStart) && firstValue <= Number(filteredData.priceEnd)
       );
     });
+  }
+
+  async getProduct(id: string) {
+    // const product = await this.prisma.skuBaseProducts.findMany({
+    //   where: {
+    //     productId: id,
+    //   },
+    // });
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        base: true,
+        props: true,
+      },
+    });
+    return product;
   }
 }

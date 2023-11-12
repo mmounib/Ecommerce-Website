@@ -4,7 +4,14 @@ export default {
       "./src/**/*.{js,jsx,ts,tsx}",
     ],
     theme: {
+
       extend: {
+        gridTemplateRows: {
+          "base-row": "1fr ",
+        },
+        gridTemplateColumns: {
+          "base-col": "1fr 200px",
+        },
         backgroundImage: {
           "sign-bg": "url(./src/assets/ecommerce-image.jpg)",
           "sign-in": "url(./src/assets/sign-in.jpg)",

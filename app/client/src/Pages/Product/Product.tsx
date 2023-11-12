@@ -1,10 +1,11 @@
-interface customer {
-  name: string;
-  date: string;
-  text: string;
-}
+import { useState } from "react";
+import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
+import { Customer, ProductObject } from "../../interfaces";
+import { useParams } from "react-router";
+import { AxiosRequestConfig } from "axios";
+import { useRequest } from "../../Hooks/useRequest";
 
-const CustomerReview = ({ name, date, text }: customer) => {
+const CustomerReview = ({ name, date, text }: Customer) => {
   return (
     <section className="flex items-start flex-col max-w-[500px] gap-4">
       <div className="flex flex-col items-center gap-4">
@@ -45,7 +46,9 @@ const CustomerReview = ({ name, date, text }: customer) => {
               {text}
             </p>
             {/*if there is no person dont display it*/}
-            <span className=" mt-4 font-medium text-base capitalize text-gray-400">5 person helped</span>
+            <span className=" mt-4 font-medium text-base capitalize text-gray-400">
+              5 person helped
+            </span>
           </div>
         </div>
       </div>
@@ -54,26 +57,62 @@ const CustomerReview = ({ name, date, text }: customer) => {
 };
 
 export default function Product() {
+  const { id } = useParams();
+
+  const [product, setProduct] = useState<ProductObject>({} as ProductObject);
+
+  useEffectOnUpdate(() => {
+    const ProductGetter = async () => {
+      const opt: AxiosRequestConfig = {
+        url: `/api/product/productId/${id}`,
+        method: "GET",
+      };
+      const res = await useRequest(opt);
+      console.log(res?.data);
+      setProduct(res?.data);
+    };
+    ProductGetter();
+  }, []);
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
-      <div className="flex items-start gap-44 max-w-[1100px] mx-auto">
-        <img
-          src="../../../src/assets/accessoriesCategory.jpeg"
-          alt="product image"
-          className="h-[560px] w-[450px] rounded-[5px]"
-        />
-        <div className="flex flex-col gap-10 flex-grow h-full">
+      <div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
+        <div className="grid grid-cols-base-col gap-4 grid-rows-base-row h-full">
+          <div className=" col-span-1 w-[400px] row-span-1">
+            <img
+              src={`https://${product.image}`}
+              alt="product image"
+              className="h-[560px] w-[650px] rounded-[5px]"
+            />
+          </div>
+          <div className=" col-start-2 flex flex-col gap-3">
+            {product?.image?.map((si, index) => (
+              <img
+                src={`https://${si}`}
+                alt="product image"
+                className="h-[75px] w-[95px] rounded-[5px]"
+                key={index}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-10 w-full">
           <div className="flex flex-col items-start gap-4">
-            <h1 className="font-extrabold text-6xl">Product 1</h1>
-            <span className="font-medium text-lg text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-              450.00 MAD
+            <h1 className="font-bold leading-10 text-left text-3xl">
+              {product.title}
+            </h1>
+            <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+              ${product.price}
             </span>
           </div>
-          <div className="flex flex-col gap-4">
-            <button className="inline-block rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">
+          <div className="flex flex-col items-start gap-4">
+            <h3 className="font-medium text-left text-2xl">Colors</h3>
+            <span className=" ">{pro}</span>
+          </div>
+          <div className="flex flex-col gap-4 justify-end w-full h-full">
+            <button className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">
               Add To Cart
             </button>
-            <button className="inline-block button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4">
+            <button className="max-w-[500px] button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4">
               Favorite
             </button>
           </div>
