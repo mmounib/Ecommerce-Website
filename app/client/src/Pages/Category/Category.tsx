@@ -68,20 +68,19 @@ export default function Category() {
 
 	const productsList = products.map((item) => {
 		return (
-			<div className="product flex flex-col gap-4" key={item.id}>
+			<div className="product flex flex-col w-64 gap-4" key={item.id}>
 				<Link to={`/product/${item.id}`}>
 					<img
-						className="productCard w-64 h-96 rounded-lg"
+						className="productCard w-full h-96 rounded-lg"
 						src={`https://${item.image[0]}`}
 						alt=""
 					/>
 				</Link>
 				<div>
-					<h1 className="text-lg font-semibold">{`${item.title.substring(
-						0,
-						20
-					)}...`}</h1>
-					<p className="text-violet-800 font-medium">{item.price}</p>
+					<h1 className="text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+						{item.title}
+					</h1>
+					<p className="text-left text-violet-800 font-medium">{item.price}</p>
 				</div>
 			</div>
 		);

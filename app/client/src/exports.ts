@@ -6,18 +6,20 @@ import Logout from "./Pages/Logout/Logout";
 import MainLayout from "./Pages/MainLayout";
 import Payment from "./Pages/Payment/Payment";
 import Product from "./Pages/Product/Product";
-import SignIn from "./Pages/SignIn/SignIn.tsx";
-import SignUp from "./Pages/SignIn/SignUp.tsx";
+import Profile from "./Pages/Profile/Profile";
+import SignIn from "./Pages/SignIn/SignIn";
+import SignUp from "./Pages/SignIn/SignUp";
 
 export {
-    Category,
-    CategoryLayout,
-    ErrorPage,
-    Home,
-    Logout,
-    MainLayout,
-    Payment,
-    Product,
-    SignIn,
-    SignUp
+	Category,
+	CategoryLayout,
+	ErrorPage,
+	Home,
+	Logout,
+	MainLayout,
+	Payment,
+	Profile,
+	Product,
+	SignIn,
+	SignUp,
 };
