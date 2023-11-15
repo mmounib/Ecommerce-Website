@@ -14,7 +14,6 @@ export class ProductService {
         products: true,
       },
     });
-    console.log(products);
     return products;
   }
 

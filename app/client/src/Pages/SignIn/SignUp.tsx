@@ -1,7 +1,8 @@
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
+import { useRequest } from "../../Hooks/useRequest";
 axios.defaults.withCredentials = true;
 
 interface signUpProps {
@@ -13,10 +14,24 @@ interface signUpProps {
 
 const SignUp = () => {
 	const { register, handleSubmit } = useForm<signUpProps>();
+	const navigate = useNavigate()
 
-	const submitForm: SubmitHandler<signUpProps> = (data) => {
+	const submitForm: SubmitHandler<signUpProps> = (dt) => {
 		//! Need To Transfer This Data to The BACKEND Endpoint
-		console.log(data);
+		const Fetch = async () => {
+			const data: AxiosRequestConfig = {
+				url: '/api/auth/signup',
+				method: 'POST',
+				data: {
+					email: dt.email,
+					username: dt.username,
+					password: dt.password,
+				}
+			}
+			const res = await useRequest(data)
+			navigate('/')
+		}
+		void Fetch()
 	};
 	return (
 		<section className="h-screen w-full bg-sign-bg bg-cover bg-gray-500 bg-blend-multiply bg-center">

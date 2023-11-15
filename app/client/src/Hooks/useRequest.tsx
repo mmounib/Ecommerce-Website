@@ -25,11 +25,10 @@ export const useRequest = async (request: AxiosRequestConfig) => {
 		const response = await axios(request);
 		return response;
 	} catch (error: any) {
-		console.log(error.response.data);
 		if (error.response && error.response.status == 401) {
 			if (error.response.data.message === "invalid token")
 				window.location.href = "http://localhost:5173/sign";
-			else {
+			else if (error.response.data.message === "expired token") {
 				const res = await retryOriginalRequest(error.config);
 				return res;
 			}

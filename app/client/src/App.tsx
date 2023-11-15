@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./Style/App.css";
 import {
   CategoryLayout, Category, ErrorPage,
-  Home, Logout, MainLayout,
+  Home, Logout, MainLayout, Profile,
   Payment, Product, SignIn, SignUp
 } from "./exports";
 
@@ -26,6 +26,9 @@ function App() {
             <Route path=":id" element={<Product />} />
           </Route>
           <Route path="/payment" element={<Payment />} />
+          <Route path="/profile" element={<Profile />} >
+            <Route path=":id" element={<Profile />} />
+          </Route>
           <Route path="/logout" element={<Logout />} />
         </Route>
       </Routes>
