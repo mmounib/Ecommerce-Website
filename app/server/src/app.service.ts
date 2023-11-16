@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
   private index = 0;
   private skuProp: skuProp[];
-  private firstIntervalRunning = true;
+  private firstIntervalRunning = false;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -30,14 +30,14 @@ export class AppService {
           "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
       },
       {
-        categoryName: 'electornic',
+        categoryName: 'electronics',
         search: 'iphones',
         categoryDesc:
           "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
       },
       {
         categoryName: 'clothes',
-        search: 'men authumn clothes',
+        search: 'men clothes',
         categoryDesc:
           "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
       },
@@ -60,6 +60,7 @@ export class AppService {
 
     try {
       const response = await axios.request(options);
+      console.log('reviews: ', response.data.result.reviews.count);
       return response.data?.result?.item;
     } catch (error) {
       options.headers['X-RapidAPI-Key'] = this.config.get('API_KEY2');
@@ -71,7 +72,11 @@ export class AppService {
   async createProduct(productDetails: any, categoryId: string) {
     for (let i = 0; productDetails.images && i < productDetails.images.length; i++)
       productDetails.images[i] = productDetails.images[i].slice(2);
-    for (let i = 0; productDetails.description.images && i < productDetails.description.images.length; i++)
+    for (
+      let i = 0;
+      productDetails.description.images && i < productDetails.description.images.length;
+      i++
+    )
       productDetails.description.images[i] = productDetails.description.images[i].slice(2);
     try {
       await this.prisma.product.create({
@@ -157,11 +162,13 @@ export class AppService {
                         vid: value.vid,
                         name: value.name,
                         propTips: value.propTips,
-                        image: value.image.slice(2),
+                        image: value.image?.slice(2),
                         skuPropPid: this.skuProp[idx].id,
                       },
                     });
-                  } catch (error) {}
+                  } catch (error) {
+                    console.log(error);
+                  }
                 }),
               );
             }
@@ -177,14 +184,15 @@ export class AppService {
     try {
       await Promise.all(
         productReviews.map(async (item) => {
-          for (let i = 0; item.images && i < item.images.length; i++) item.images[i] = item.images[i].slice(2);
+          for (let i = 0; item.images && i < item.images.length; i++)
+            item.images[i] = item.images[i].slice(2);
           await this.prisma.reviews.create({
             data: {
-              Date: item.Date,
-              content: item.content,
-              stars: item.stars,
-              images: item.images,
-              helpful: item.helpful,
+              Date: item.reviewDate,
+              content: item.reviewContent,
+              stars: item.reviewStarts,
+              images: item.reviewImages,
+              helpful: item.reviewHelpfulYes,
               productId: String(productId),
             },
           });
@@ -235,7 +243,7 @@ export class AppService {
 
   async requestProductsReviews(response) {
     console.log('requestProductsReviews is called');
-    if (this.index < response.length) {
+    if (response && this.index < response.length) {
       const product = response[this.index];
       this.index++;
       await this.getAndStoreReviews(product.item.itemId);
@@ -253,7 +261,7 @@ export class AppService {
     resolve,
   ) {
     console.log('requestProductsDetails is called');
-    if (this.index < response.length) {
+    if (response && this.index < response.length) {
       const product = response[this.index];
       this.index++;
       await this.getAndStoreProduct(product.item.itemId, categoryId);
@@ -272,7 +280,7 @@ export class AppService {
     search: string;
     categoryDesc: string;
   }) {
-    const requestInterval = 1700;
+    const requestInterval = 2000;
     let reviewTimer: NodeJS.Timeout;
 
     const categoryFind = await this.prisma.category.findFirst({
@@ -304,15 +312,15 @@ export class AppService {
   ) {
     return new Promise((resolve) => {
       const requestTimer = setInterval(() => {
-        if (this.firstIntervalRunning) {
-          this.requestProductsReviews(response);
-        } else {
-          clearInterval(requestTimer);
-          reviewTimer = setInterval(
-            () => this.requestProductsDetails(response, reviewTimer, categoryId, resolve),
-            requestInterval,
-          );
-        }
+        // if (this.firstIntervalRunning) {
+        //   this.requestProductsReviews(response);
+        // } else {
+        clearInterval(requestTimer);
+        reviewTimer = setInterval(
+          () => this.requestProductsDetails(response, reviewTimer, categoryId, resolve),
+          requestInterval,
+        );
+        // }
       }, requestInterval);
     });
   }
@@ -330,7 +338,7 @@ export class AppService {
     try {
       console.log('fetchCategoryData');
       const response = await axios.request(options);
-      if (response.data) console.log('fetching successfully');
+      if (response.data.result.resultList) console.log('fetching successfully');
       return response.data.result.resultList;
     } catch (error) {
       options.headers['X-RapidAPI-Key'] = this.config.get('API_KEY2');

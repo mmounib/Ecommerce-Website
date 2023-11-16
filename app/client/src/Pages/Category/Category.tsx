@@ -62,48 +62,47 @@ export default function Category() {
     void FetchProducts();
   }, [category.current, reviewRange, reset.current]);
 
-  const productsList = products.map((item) => {
-    return (
-      <div className="product flex flex-col gap-4" key={item.id}>
-        <Link to={`/product/${item.id}`}>
-          <img
-            className="productCard w-64 h-96 rounded-lg"
-            src={`https://${item.image[0]}`}
-            alt=""
-          />
-        </Link>
-        <div>
-          <h1 className="text-lg font-semibold">{`${item.title.substring(
-            0,
-            20
-          )}...`}</h1>
-          <p className="text-violet-800 font-medium">{item.price}</p>
-        </div>
-      </div>
-    );
-  });
-  return (
-    <section className="flex flex-col lg:flex-row w-10/12 justify-between gap-16 py-24">
-      <div className="filter lg:w-1/4 flex flex-col gap-4">
-        <div className="flex justify-between">
-          <p className="font-semibold text-xl">Filter:</p>
-          <p className="font-medium cursor-pointer" onClick={resetInputs}>
-            Reset all
-          </p>
-        </div>
-        <CustomerReview
-          setReviewRange={setReviewRange}
-          reviewRange={reviewRange}
-        />
-        <PriceField
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          fetchData={NewData}
-        />
-      </div>
-      <div className="flex lg:w-3/4 flex-wrap gap-8 justify-center">
-        {productsList}
-      </div>
-    </section>
-  );
+	const productsList = products?.map((item) => {
+		return (
+			<div className="product flex flex-col w-64 gap-4" key={item.id}>
+				<Link to={`/product/${item.id}`}>
+					<img
+						className="productCard w-full h-96 rounded-lg"
+						src={`https://${item.image[0]}`}
+						alt=""
+					/>
+				</Link>
+				<div>
+					<h1 className="text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+						{item.title}
+					</h1>
+					<p className="text-left text-violet-800 font-medium">{item.price}</p>
+				</div>
+			</div>
+		);
+	});
+	return (
+		<section className="flex flex-col lg:flex-row w-10/12 justify-between gap-16 py-24">
+			<div className="filter lg:w-1/4 flex flex-col gap-4">
+				<div className="flex justify-between">
+					<p className="font-semibold text-xl">Filter:</p>
+					<p className="font-medium cursor-pointer" onClick={resetInputs}>
+						Reset all
+					</p>
+				</div>
+				<CustomerReview
+					setReviewRange={setReviewRange}
+					reviewRange={reviewRange}
+				/>
+				<PriceField
+					priceRange={priceRange}
+					setPriceRange={setPriceRange}
+					fetchData={NewData}
+				/>
+			</div>
+			<div className="flex lg:w-3/4 flex-wrap gap-8 justify-center">
+				{productsList}
+			</div>
+		</section>
+	);
 }

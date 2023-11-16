@@ -26,8 +26,8 @@ export const useRequest = async (request: AxiosRequestConfig) => {
 	} catch (error: any) {
 		if (error.response && error.response.status == 401) {
 			if (error.response.data.message === "invalid token")
-				<Navigate to={"http://localhost:5173/sign"}/>
-			else {
+				window.location.href = "http://localhost:5173/sign";
+			else if (error.response.data.message === "expired token") {
 				const res = await retryOriginalRequest(error.config);
 				return res;
 			}

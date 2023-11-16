@@ -1,3 +1,5 @@
+import SignIn from "./Pages/Authentication/SignIn";
+import SignUp from "./Pages/Authentication/SignUp";
 import Category from "./Pages/Category/Category";
 import CategoryLayout from "./Pages/CategoryLayout";
 import ErrorPage from "./Pages/ErrorPage";
@@ -6,18 +8,18 @@ import Logout from "./Pages/Logout/Logout";
 import MainLayout from "./Pages/MainLayout";
 import Payment from "./Pages/Payment/Payment";
 import Product from "./Pages/Product/Product";
-import SignIn from "./Pages/Authentication/SignIn.tsx";
-import SignUp from "./Pages/Authentication/SignUp.tsx";
+import Profile from "./Pages/Profile/Profile";
 
 export {
-    Category,
-    CategoryLayout,
-    ErrorPage,
-    Home,
-    Logout,
-    MainLayout,
-    Payment,
-    Product,
-    SignIn,
-    SignUp
+  Category,
+  CategoryLayout,
+  ErrorPage,
+  Home,
+  Logout,
+  MainLayout,
+  Payment,
+  Profile,
+  Product,
+  SignIn,
+  SignUp,
 };

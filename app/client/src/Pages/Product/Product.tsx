@@ -56,10 +56,26 @@ const CustomerReview = ({ name, date, text }: Customer) => {
   );
 };
 
+interface ProductBase {
+  ext: string;
+  price: number;
+  promotionPrice: number;
+  propMap: string;
+  quantity: number;
+  skuId: string;
+}
+
 export default function Product() {
   const { id } = useParams();
 
   const [product, setProduct] = useState<ProductObject>({} as ProductObject);
+  const [skuBase, setSkuBase] = useState<ProductBase[]>([]);
+  // const [propMap, setPropMap] = useState<>("");
+  const [pidColor, setPidColor] = useState<number>(0);
+  const [pidSize, setPidSize] = useState<number>(0);
+
+  const [vidColor, setVidColor] = useState<number>(0);
+  const [vidSize, setVidSize] = useState<number>(0);
 
   useEffectOnUpdate(() => {
     const ProductGetter = async () => {
@@ -68,11 +84,59 @@ export default function Product() {
         method: "GET",
       };
       const res = await useRequest(opt);
-      console.log(res?.data);
+      // console.log(res?.data);
       setProduct(res?.data);
     };
     ProductGetter();
   }, []);
+
+  const SkuBaseGetter = async () => {
+    product?.base?.map(async (Base, index) => {
+      // const skuId = product.base && product.base[0].skuBaseId;
+      const opt: AxiosRequestConfig = {
+        url: `/api/product/skuBase/${Base.skuBaseId}`,
+        method: "GET",
+      };
+      const res = await useRequest(opt);
+      setSkuBase((prevBase) => [...prevBase, res?.data]);
+    });
+  };
+
+  useEffectOnUpdate(() => {
+    SkuBaseGetter();
+  }, [product.base]);
+
+  const skuPropGetter = async () => {
+    skuBase?.map(async (base) => {
+      let segments, colorValue, sizeValue;
+      if (base.propMap && base.propMap.includes(";")) {
+        segments = base.propMap.split(";");
+
+        colorValue = segments[0].split(":");
+        setPidColor(parseInt(colorValue[0]));
+        setVidColor(parseInt(colorValue[1]));
+
+        sizeValue = segments[1].split(":");
+
+        setPidSize(parseInt(sizeValue[0]));
+        setVidSize(parseInt(sizeValue[1]));
+      } else {
+        colorValue = base.propMap.split(":");
+        setPidColor(parseInt(colorValue[0]));
+        setVidColor(parseInt(colorValue[1]));
+      }
+      const opt: AxiosRequestConfig = {
+        url: `/api/product/skuProp/${pidSize}`,
+        method: "GET",
+      };
+      const res = await useRequest(opt);
+      console.log(res?.data);
+    });
+  };
+
+  useEffectOnUpdate(() => {
+    skuPropGetter();
+  }, [skuBase]);
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
       <div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
@@ -106,7 +170,7 @@ export default function Product() {
           </div>
           <div className="flex flex-col items-start gap-4">
             <h3 className="font-medium text-left text-2xl">Colors</h3>
-            <span className=" ">{pro}</span>
+            <span className=" ">{}</span>
           </div>
           <div className="flex flex-col gap-4 justify-end w-full h-full">
             <button className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">

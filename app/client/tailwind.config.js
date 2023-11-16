@@ -18,7 +18,7 @@ export default {
         },
         backgroundColor: {
           'primary-color': '#F5F5F5',
-          'border-color': '#F8F8F8;',
+          'border-color': '#F8F8F8',
           'secondary-color': '#121212',
         },
         colors: {

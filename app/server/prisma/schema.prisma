@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,101 +8,104 @@ datasource db {
 }
 
 model user {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  email    String  @unique
-  address  String?
-  username String
-  hash     String?
-  hashedRt String?
-
-  cards      ShoppingList?
+  id         String          @id @default(uuid())
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  email      String          @unique
+  address    String?
+  username   String
+  hash       String?
+  hashedRt   String?
   favourites FavouritesList?
+  shopping   ShoppingList?
+  orders     CardsList?
 }
 
 model category {
-  id          String @id @default(uuid())
-  type        String @unique
+  id          String    @id @default(uuid())
+  type        String    @unique
   description String
-
-  products Product[]
+  products    Product[]
 }
 
 model Product {
-  id         String            @id @unique
-  title      String
-  price      String
-  image      String[]
-  ImageDesc  String[]
-  video      String?
-  base       skuBaseProducts[]
-  props      skuProp[]
-  reviews    reviews[]
-  categoryId String
-  category   category          @relation(fields: [categoryId], references: [id])
-
+  id               String              @id @unique
+  title            String
+  price            String
+  image            String[]
+  ImageDesc        String[]
+  video            String?
+  reviews          reviews[]
+  base             skuBaseProducts[]
+  props            skuProp[]
+  CardsList        CardsProducts[]
   productFavourite FavouriteProducts[]
   productShopping  ShoppingProducts[]
-  CardsList        CardsList[]
+  categoryId       String
+  category         category            @relation(fields: [categoryId], references: [id])
 }
 
 model reviews {
-  id      String   @id @default(uuid())
-  Date    String
-  content String
-  stars   Int
-  images  String[]
-  helpful Int
-
+  id        String   @id @default(uuid())
+  Date      String
+  content   String
+  stars     Int
+  images    String[]
+  helpful   Int
   productId String
-  Product   Product @relation(fields: [productId], references: [id])
+  Product   Product  @relation(fields: [productId], references: [id])
 }
 
 model FavouritesList {
   id      String              @id @default(uuid())
-  userId  String                 @unique
-  user    user                @relation(fields: [userId], references: [id])
+  userId  String              @unique
   product FavouriteProducts[]
+  user    user                @relation(fields: [userId], references: [id])
 }
 
 model ShoppingList {
   id               String             @id @default(uuid())
-  userId           String                @unique
+  userId           String             @unique
   user             user               @relation(fields: [userId], references: [id])
-  product          CardsList[]
   ShoppingProducts ShoppingProducts[]
 }
 
-model CardsList {
+model ShoppingProducts {
   productId      String
-  product        Product      @relation(fields: [productId], references: [id])
   ShoppingListId String
-  ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
   quantity       Int          @default(1)
+  ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
+  product        Product      @relation(fields: [productId], references: [id])
 
   @@id([productId, ShoppingListId])
 }
 
 model FavouriteProducts {
-  FavouritesList FavouritesList @relation(fields: [favouriteId], references: [id])
   favouriteId    String
-
-  Product   Product @relation(fields: [productId], references: [id])
-  productId String
+  productId      String
+  FavouritesList FavouritesList @relation(fields: [favouriteId], references: [id])
+  Product        Product        @relation(fields: [productId], references: [id])
 
   @@id([productId, favouriteId])
 }
 
-model ShoppingProducts {
-  ShoppingList ShoppingList @relation(fields: [ShoppingId], references: [id])
-  ShoppingId   String
-
-  Product   Product @relation(fields: [productId], references: [id])
+model CardsProducts {
+  CardsId   String
   productId String
+  price     String
+  quantity  Int       @default(1)
+  CardsList CardsList @relation(fields: [CardsId], references: [id])
+  Product   Product   @relation(fields: [productId], references: [id])
 
-  @@id([productId, ShoppingId])
+  @@id([productId, CardsId])
+}
+
+model CardsList {
+  id        String          @id @default(uuid())
+  userId    String          @unique
+  createdAt DateTime        @default(now())
+  product   CardsProducts[]
+  user      user            @relation(fields: [userId], references: [id])
 }
 
 model skuBase {
@@ -119,33 +119,31 @@ model skuBase {
 }
 
 model skuBaseProducts {
-  skuBase   skuBase @relation(fields: [skuBaseId], references: [skuId])
   skuBaseId String
-
-  Product   Product @relation(fields: [productId], references: [id])
   productId String
+  Product   Product @relation(fields: [productId], references: [id])
+  skuBase   skuBase @relation(fields: [skuBaseId], references: [skuId])
 
   @@id([productId, skuBaseId])
 }
 
 model skuValues {
-  id       String  @id @default(uuid())
-  vid      Int
-  name     String  @unique
-  image    String?
-  propTips String
-
-  skuProp    skuProp @relation(fields: [skuPropPid], references: [id])
+  id         String  @id @default(uuid())
+  vid        Int
+  name       String
+  image      String?
+  propTips   String
   skuPropPid String
+  skuProp    skuProp @relation(fields: [skuPropPid], references: [id])
 }
 
 model skuProp {
   id        String      @id @default(uuid())
-  pid       Int
+  pid       Int @unique
   name      String
-  values    skuValues[]
-  Product   Product     @relation(fields: [productId], references: [id])
   productId String
+  Product   Product     @relation(fields: [productId], references: [id])
+  values    skuValues[]
 }
 
 model revocatedTokens {

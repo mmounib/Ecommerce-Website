@@ -1,41 +1,20 @@
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
-import shoppingList from "../assets/icons/shoppingList.svg";
-import profile from "../assets/icons/profile.svg";
 import { useState } from "react";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
-import Xmark from "../assets/icons/xMark.svg";
 import image from "../assets/accessoriesCategory.jpeg";
 import trash from "../assets/icons/Trash.png";
-import { User } from "../interfaces";
-import { useEffectOnUpdate } from "../Hooks/useEffectOnUpdate";
-import { AxiosRequestConfig } from "axios";
-import { useRequest } from "../Hooks/useRequest";
+import ShoppingList from "../Components/shoppingList";
+import UserNav from "../Components/userNav";
 
 export default function Header() {
 	const [showList, setShowList] = useState<boolean>(false);
-	const [user, setUser] = useState<User>({} as User);
 	const allLinks = [
 		{ id: nanoid(), to: "/category/kids", value: "kids" },
 		{ id: nanoid(), to: `/category/accessories`, value: "accessories" },
 		{ id: nanoid(), to: "/category/electronics", value: "electronics" },
 		{ id: nanoid(), to: "/category/clothes", value: "clothes" },
 	];
-
-	useEffectOnUpdate(() => {
-		const fetchUser = async () => {
-			const opt: AxiosRequestConfig = {
-				url: "/api/user",
-				method: "GET",
-			};
-			const res = await useRequest(opt);
-			if (res) {
-				const data = res.data as User;
-				setUser(data);
-			}
-		};
-		void fetchUser();
-	}, []);
 
 	const navbar = allLinks.map((item) => {
 		return (
@@ -68,7 +47,7 @@ export default function Header() {
 		{ itemId: nanoid(), title: "Product 1", image: image, price: "250" },
 	];
 
-  const [number, setNumber] = useState<number>(1);
+	const [number, setNumber] = useState<number>(1);
 
 	const totalPrice = 500;
 
@@ -119,13 +98,7 @@ export default function Header() {
 			</Link>
 			<ul className="gap-8 hidden md:flex lg:gap-12 xl:gap-16">{navbar}</ul>
 			<div className="flex gap-4">
-				<img
-					className="w-6 h-6 cursor-pointer"
-					src={shoppingList}
-					alt=""
-					onClick={() => setShowList(true)}
-				/>
-				<img className="w-6 h-6" src={profile} alt="" />
+				<UserNav setShowList={setShowList} />
 				<HiMenu
 					className="menu md:hidden w-6 h-6 cursor-pointer"
 					onClick={() => setOn((prev) => !prev)}
@@ -148,29 +121,11 @@ export default function Header() {
 				)}
 			</div>
 			{showList && (
-				<div className="absolute top-0 right-0 h-screen w-screen z-10 bg-secondary-color bg-opacity-30">
-					<div className="list flex flex-col items-center gap-12 ml-auto w-[600px] h-screen bg-primary-color px-12">
-						<header className="flex justify-between items-center w-full font-semibold text-2xl py-8 border-b-2 border-gray-300">
-							<p>Shopping List</p>
-							<img
-								className="cursor-pointer"
-								src={Xmark}
-								alt=""
-								onClick={() => setShowList(false)}
-							/>
-						</header>
-						<figure className="w-full flex flex-col gap-8 h-full overflow-x-hidden overflow-y-scroll">
-							{products}
-						</figure>
-						<Link
-							to="/payment"
-							className="w-full py-4 rounded-lg mb-12 bg-secondary-color text-primary-color"
-							onClick={() => setShowList(false)}
-						>
-							Check Out - {totalPrice}.00MAD
-						</Link>
-					</div>
-				</div>
+				<ShoppingList
+					setShowList={setShowList}
+					products={products}
+					totalPrice={totalPrice}
+				/>
 			)}
 		</header>
 	);

@@ -23,4 +23,12 @@ export class ProductController {
   async getProduct(@Param('id') id: string) {
     return await this.productService.getProduct(id);
   }
+  @Get('skuBase/:id')
+  async getSkuBase(@Param('id') id: string) {
+    return await this.productService.getSkuBase(id);
+  }
+  @Get('skuProp/:id')
+  async getSkuProp(@Param('id') id: number) {
+    return await this.productService.getSkuProp(id as number);
+  }
 }

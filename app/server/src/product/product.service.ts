@@ -54,11 +54,6 @@ export class ProductService {
   }
 
   async getProduct(id: string) {
-    // const product = await this.prisma.skuBaseProducts.findMany({
-    //   where: {
-    //     productId: id,
-    //   },
-    // });
     const product = await this.prisma.product.findUnique({
       where: {
         id: id,
@@ -69,5 +64,21 @@ export class ProductService {
       },
     });
     return product;
+  }
+  async getSkuBase(id: string) {
+    const skuBase = await this.prisma.skuBase.findUnique({
+      where: {
+        skuId: id,
+      },
+    });
+    return skuBase;
+  }
+  async getSkuProp(id: number) {
+    const skuProp = await this.prisma.skuProp.findFirst({
+      where: {
+        pid: id,
+      },
+    });
+    return skuProp;
   }
 }
