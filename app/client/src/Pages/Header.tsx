@@ -2,8 +2,6 @@ import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
-import image from "../assets/accessoriesCategory.jpeg";
-import trash from "../assets/icons/Trash.png";
 import ShoppingList from "../Components/shoppingList";
 import UserNav from "../Components/userNav";
 
@@ -39,57 +37,7 @@ export default function Header() {
 		);
 	});
 
-	const data = [
-		{ itemId: nanoid(), title: "Product 1", image: image, price: "250" },
-		{ itemId: nanoid(), title: "Product 1", image: image, price: "250" },
-		{ itemId: nanoid(), title: "Product 1", image: image, price: "250" },
-		{ itemId: nanoid(), title: "Product 1", image: image, price: "250" },
-		{ itemId: nanoid(), title: "Product 1", image: image, price: "250" },
-	];
-
-	const [number, setNumber] = useState<number>(1);
-
-	const totalPrice = 500;
-
-	const products = data.map((item) => {
-		return (
-			<div className="flex gap-8 justify-between w-full" key={item.itemId}>
-				<Link to={`/product/${item.itemId}`}>
-					<img
-						className="productCard w-36 h-52 rounded-lg"
-						src={item.image}
-						alt=""
-					/>
-				</Link>
-				<div className="flex flex-col flex-grow justify-between">
-					<div className="flex flex-col items-start">
-						<h1 className="text-2xl font-semibold">{item.title}</h1>
-						<p className="text-violet-800 font-medium">{item.price}.00MAD</p>
-					</div>
-					<footer className="flex justify-between">
-						<div className="flex justify-center items-center h-10 border-2 border-gray-300 text-gray-300">
-							<div
-								className="w-10 cursor-pointer"
-								onClick={() => setNumber((prev) => prev - 1)}
-							>
-								-
-							</div>
-							<div className="w-10 border-x-2 text-secondary-color">
-								{number}
-							</div>
-							<div
-								className="w-10 cursor-pointer"
-								onClick={() => setNumber((prev) => prev + 1)}
-							>
-								+
-							</div>
-						</div>
-						<img src={trash} alt="" />
-					</footer>
-				</div>
-			</div>
-		);
-	});
+	console.log("Header re-render")
 
 	return (
 		<header className="flex justify-between items-center text-xl px-8 lg:px-16 xl:px-24 py-7 border-b-2 border-l-gray-400">
@@ -123,8 +71,6 @@ export default function Header() {
 			{showList && (
 				<ShoppingList
 					setShowList={setShowList}
-					products={products}
-					totalPrice={totalPrice}
 				/>
 			)}
 		</header>

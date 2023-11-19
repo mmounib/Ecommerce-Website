@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
 import { AxiosRequestConfig } from "axios";
 import CustomerReview from "./customerReview";
@@ -27,10 +27,6 @@ export default function Category() {
 		setPriceRange({ priceStart: "", priceEnd: "" });
 		reset.current = !reset.current;
 	}
-
-	useEffect(() => {
-		resetInputs();
-	}, [category.current]);
 
 	async function newData() {
 		const data: FilterdData = {

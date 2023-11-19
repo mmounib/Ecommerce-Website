@@ -18,4 +18,9 @@ export class ProductController {
   ) {
     return await this.productService.filtredProducts(categoryName, filterData);
   }
+
+  @Get('subProducts/:id')
+  async getSubProducts(@Param('id') id: string) {
+    return await this.productService.getSubProducts(id)
+  }
 }
