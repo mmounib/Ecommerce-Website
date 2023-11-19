@@ -60,10 +60,36 @@ export class ProductService {
       },
       include: {
         base: true,
-        props: true,
+        props: {
+          include: {
+            values: true,
+          },
+        },
       },
     });
-    return product;
+
+    const baseIds = await Promise.all(
+      product.base.map(async (baseId) => {
+        const skuBaseid = await this.prisma.skuBase.findUnique({
+          where: {
+            skuId: baseId.skuBaseId,
+          },
+        });
+        return skuBaseid;
+      }),
+    );
+    // const propMaps = await Promise.all(
+    //   baseIds.map(async (propIds) => {
+
+    //     const props = await this.prisma.skuProp.findFirst({
+    //       where: {
+    //         pid: ,
+    //       }
+    //     })
+    //   })
+    // )
+
+    // return product;
   }
   async getSkuBase(id: string) {
     const skuBase = await this.prisma.skuBase.findUnique({

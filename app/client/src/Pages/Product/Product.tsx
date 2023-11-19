@@ -69,13 +69,13 @@ export default function Product() {
   const { id } = useParams();
 
   const [product, setProduct] = useState<ProductObject>({} as ProductObject);
-  const [skuBase, setSkuBase] = useState<ProductBase[]>([]);
+  // const [skuBase, setSkuBase] = useState<ProductBase[]>([]);
   // const [propMap, setPropMap] = useState<>("");
-  const [pidColor, setPidColor] = useState<number>(0);
-  const [pidSize, setPidSize] = useState<number>(0);
+  // const [pidColor, setPidColor] = useState<number>(0);
+  // const [pidSize, setPidSize] = useState<number>(0);
 
-  const [vidColor, setVidColor] = useState<number>(0);
-  const [vidSize, setVidSize] = useState<number>(0);
+  // const [vidColor, setVidColor] = useState<number>(0);
+  // const [vidSize, setVidSize] = useState<number>(0);
 
   useEffectOnUpdate(() => {
     const ProductGetter = async () => {
@@ -90,53 +90,54 @@ export default function Product() {
     ProductGetter();
   }, []);
 
-  const SkuBaseGetter = async () => {
-    product?.base?.map(async (Base, index) => {
-      // const skuId = product.base && product.base[0].skuBaseId;
-      const opt: AxiosRequestConfig = {
-        url: `/api/product/skuBase/${Base.skuBaseId}`,
-        method: "GET",
-      };
-      const res = await useRequest(opt);
-      setSkuBase((prevBase) => [...prevBase, res?.data]);
-    });
-  };
+  // const SkuBaseGetter = async () => {
+  //   product?.base?.map(async (Base, index) => {
+  //     // const skuId = product.base && product.base[0].skuBaseId;
+  //     const opt: AxiosRequestConfig = {
+  //       url: `/api/product/skuBase/${Base.skuBaseId}`,
+  //       method: "GET",
+  //     };
+  //     const res = await useRequest(opt);
+  //     setSkuBase((prevBase) => [...prevBase, res?.data]);
+  //   });
+  // };
 
-  useEffectOnUpdate(() => {
-    SkuBaseGetter();
-  }, [product.base]);
+  // useEffectOnUpdate(() => {
+  //   SkuBaseGetter();
+  // }, [product.base]);
 
-  const skuPropGetter = async () => {
-    skuBase?.map(async (base) => {
-      let segments, colorValue, sizeValue;
-      if (base.propMap && base.propMap.includes(";")) {
-        segments = base.propMap.split(";");
+  // const skuPropGetter = async () => {
+  //   skuBase?.map(async (base) => {
+  //     let segments, colorValue, sizeValue;
+  //     if (base.propMap && base.propMap.includes(";")) {
+  //       segments = base.propMap.split(";");
 
-        colorValue = segments[0].split(":");
-        setPidColor(parseInt(colorValue[0]));
-        setVidColor(parseInt(colorValue[1]));
+  //       colorValue = segments[0].split(":");
+  //       setPidColor(parseInt(colorValue[0]));
+  //       setVidColor(parseInt(colorValue[1]));
 
-        sizeValue = segments[1].split(":");
+  //       sizeValue = segments[1].split(":");
 
-        setPidSize(parseInt(sizeValue[0]));
-        setVidSize(parseInt(sizeValue[1]));
-      } else {
-        colorValue = base.propMap.split(":");
-        setPidColor(parseInt(colorValue[0]));
-        setVidColor(parseInt(colorValue[1]));
-      }
-      const opt: AxiosRequestConfig = {
-        url: `/api/product/skuProp/${pidSize}`,
-        method: "GET",
-      };
-      const res = await useRequest(opt);
-      console.log(res?.data);
-    });
-  };
+  //       setPidSize(parseInt(sizeValue[0]));
+  //       setVidSize(parseInt(sizeValue[1]));
+  //     } else {
+  //       colorValue = base.propMap.split(":");
+  //       setPidColor(parseInt(colorValue[0]));
+  //       setVidColor(parseInt(colorValue[1]));
+  //     }
+  //     const opt: AxiosRequestConfig = {
+  //       url: `/api/product/skuProp/${pidSize}`,
+  //       method: "GET",
+  //     };
 
-  useEffectOnUpdate(() => {
-    skuPropGetter();
-  }, [skuBase]);
+  //     const res = await useRequest(opt);
+  //     // console.log(res?.data);
+  //   });
+  // };
+
+  // useEffectOnUpdate(() => {
+  //   skuPropGetter();
+  // }, [skuBase]);
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
       <div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">

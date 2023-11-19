@@ -139,7 +139,7 @@ model skuValues {
 
 model skuProp {
   id        String      @id @default(uuid())
-  pid       Int @unique
+  pid       Int 
   name      String
   productId String
   Product   Product     @relation(fields: [productId], references: [id])
