@@ -52,4 +52,53 @@ export class ProductService {
       );
     });
   }
+
+  async getSubProducts(productId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+      include: {
+        base: true,
+        props: {
+          include: {
+            values: true,
+          },
+        },
+      },
+    });
+  
+    const products = [];
+    for (const item of product.base) {
+      const base = await this.prisma.skuBase.findUnique({
+        where: {
+          skuId: item.skuBaseId,
+        },
+      });
+      let image: string = '';
+      let title: string;
+      for (const propMap of base.propMap.split(';')) {
+        const [pid, vid] = propMap.split(':');
+        const prop = await this.prisma.skuProp.findFirst({
+          where: {
+            pid: +pid,
+            productId,
+          },
+          include: {
+            values: true,
+          },
+        });
+        const value = await this.prisma.skuValues.findFirst({
+          where: {
+            vid: +vid,
+            skuPropPid: prop.id,
+          },
+        });
+        if (value.image) image = value.image;
+        title = !title ? `${prop.name}: ${value.name}` : title + ' - ' + `${prop.name}: ${value.name}`;
+      }
+      products.push({ title, image });
+    }
+    return products;
+  }
 }

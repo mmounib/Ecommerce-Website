@@ -1,3 +1,8 @@
+import { useParams } from "react-router";
+import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
+import { useRequest } from "../../Hooks/useRequest";
+import { AxiosRequestConfig } from "axios";
+
 interface customer {
   name: string;
   date: string;
@@ -54,6 +59,22 @@ const CustomerReview = ({ name, date, text }: customer) => {
 };
 
 export default function Product() {
+
+  const { id } = useParams();
+
+  useEffectOnUpdate(() => {
+    const Fetch = async () => {
+      const opt: AxiosRequestConfig = {
+        url: `/api/product/subProducts/${id}`,
+        method: 'GET',
+      }
+      const res = await useRequest(opt);
+      console.log(res?.data)
+    }
+    void Fetch()
+  }, [])
+
+  
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
       <div className="flex items-start gap-44 max-w-[1100px] mx-auto">
