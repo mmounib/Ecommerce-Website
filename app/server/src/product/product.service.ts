@@ -53,10 +53,18 @@ export class ProductService {
     });
   }
 
-  async getProduct(id: string) {
+  async getProducts(proId: string) {
+    return await this.prisma.product.findUnique({
+      where: {
+        id: proId,
+      },
+    });
+  }
+
+  async getSubProducts(productId: string) {
     const product = await this.prisma.product.findUnique({
       where: {
-        id: id,
+        id: productId,
       },
       include: {
         base: true,
@@ -67,44 +75,39 @@ export class ProductService {
         },
       },
     });
-
-    const baseIds = await Promise.all(
-      product.base.map(async (baseId) => {
-        const skuBaseid = await this.prisma.skuBase.findUnique({
+    const products = [];
+    for (const item of product.base) {
+      const base = await this.prisma.skuBase.findUnique({
+        where: {
+          skuId: item.skuBaseId,
+        },
+      });
+      let image: string = '';
+      let title: string;
+      for (const propMap of base.propMap.split(';')) {
+        const [pid, vid] = propMap.split(':');
+        const prop = await this.prisma.skuProp.findFirst({
           where: {
-            skuId: baseId.skuBaseId,
+            pid: +pid,
+            productId,
+          },
+          include: {
+            values: true,
           },
         });
-        return skuBaseid;
-      }),
-    );
-    // const propMaps = await Promise.all(
-    //   baseIds.map(async (propIds) => {
-
-    //     const props = await this.prisma.skuProp.findFirst({
-    //       where: {
-    //         pid: ,
-    //       }
-    //     })
-    //   })
-    // )
-
-    // return product;
-  }
-  async getSkuBase(id: string) {
-    const skuBase = await this.prisma.skuBase.findUnique({
-      where: {
-        skuId: id,
-      },
-    });
-    return skuBase;
-  }
-  async getSkuProp(id: number) {
-    const skuProp = await this.prisma.skuProp.findFirst({
-      where: {
-        pid: id,
-      },
-    });
-    return skuProp;
+        const value = await this.prisma.skuValues.findFirst({
+          where: {
+            vid: +vid,
+            skuPropPid: prop.id,
+          },
+        });
+        if (value.image) image = value.image;
+        title = !title
+          ? `${prop.name}: ${value.name}`
+          : title + ' - ' + `${prop.name}: ${value.name}`;
+      }
+      products.push({ title, image, price: base.price, quantity: base.quantity });
+    }
+    return products;
   }
 }

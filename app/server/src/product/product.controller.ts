@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FilterdData } from './dto';
 
@@ -20,15 +20,11 @@ export class ProductController {
   }
 
   @Get('productId/:id')
-  async getProduct(@Param('id') id: string) {
-    return await this.productService.getProduct(id);
+  async getProducts(@Param('id') id: string) {
+    return await this.productService.getProducts(id);
   }
-  @Get('skuBase/:id')
-  async getSkuBase(@Param('id') id: string) {
-    return await this.productService.getSkuBase(id);
-  }
-  @Get('skuProp/:id')
-  async getSkuProp(@Param('id') id: number) {
-    return await this.productService.getSkuProp(id as number);
+  @Get('subProductId/:id')
+  async getSubProducts(@Param('id') id: string) {
+    return await this.productService.getSubProducts(id);
   }
 }

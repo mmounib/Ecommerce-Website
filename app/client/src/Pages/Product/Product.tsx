@@ -56,101 +56,74 @@ const CustomerReview = ({ name, date, text }: Customer) => {
   );
 };
 
-interface ProductBase {
-  ext: string;
-  price: number;
-  promotionPrice: number;
-  propMap: string;
-  quantity: number;
-  skuId: string;
-}
-
 export default function Product() {
   const { id } = useParams();
 
-  const [product, setProduct] = useState<ProductObject>({} as ProductObject);
-  // const [skuBase, setSkuBase] = useState<ProductBase[]>([]);
-  // const [propMap, setPropMap] = useState<>("");
-  // const [pidColor, setPidColor] = useState<number>(0);
-  // const [pidSize, setPidSize] = useState<number>(0);
-
-  // const [vidColor, setVidColor] = useState<number>(0);
-  // const [vidSize, setVidSize] = useState<number>(0);
+  const [product, setProduct] = useState({});
+  const [subProduct, setSubProduct] = useState([]);
+  const [quantity, setQuantity] = useState(1);
+  const [isChecked, setIsChecked] = useState(false);
+  const [selectedColor, setSelectedColor] = useState({});
 
   useEffectOnUpdate(() => {
-    const ProductGetter = async () => {
+    const Fetch = async () => {
       const opt: AxiosRequestConfig = {
         url: `/api/product/productId/${id}`,
         method: "GET",
       };
       const res = await useRequest(opt);
-      // console.log(res?.data);
       setProduct(res?.data);
+      // console.log(res?.data);
     };
-    ProductGetter();
+    void Fetch();
+  }, []);
+  useEffectOnUpdate(() => {
+    const Fetch = async () => {
+      const opt: AxiosRequestConfig = {
+        url: `/api/product/subProductId/${id}`,
+        method: "GET",
+      };
+      const res = await useRequest(opt);
+      setSubProduct(res?.data);
+      // console.log(res?.data);
+    };
+    void Fetch();
   }, []);
 
-  // const SkuBaseGetter = async () => {
-  //   product?.base?.map(async (Base, index) => {
-  //     // const skuId = product.base && product.base[0].skuBaseId;
-  //     const opt: AxiosRequestConfig = {
-  //       url: `/api/product/skuBase/${Base.skuBaseId}`,
-  //       method: "GET",
-  //     };
-  //     const res = await useRequest(opt);
-  //     setSkuBase((prevBase) => [...prevBase, res?.data]);
-  //   });
-  // };
+  const increment = () => {
+    if (quantity < 900) {
+      setQuantity(quantity + 1);
+    }
+  };
 
-  // useEffectOnUpdate(() => {
-  //   SkuBaseGetter();
-  // }, [product.base]);
+  const decrement = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+  const productColors = subProduct.slice(0, 6);
 
-  // const skuPropGetter = async () => {
-  //   skuBase?.map(async (base) => {
-  //     let segments, colorValue, sizeValue;
-  //     if (base.propMap && base.propMap.includes(";")) {
-  //       segments = base.propMap.split(";");
-
-  //       colorValue = segments[0].split(":");
-  //       setPidColor(parseInt(colorValue[0]));
-  //       setVidColor(parseInt(colorValue[1]));
-
-  //       sizeValue = segments[1].split(":");
-
-  //       setPidSize(parseInt(sizeValue[0]));
-  //       setVidSize(parseInt(sizeValue[1]));
-  //     } else {
-  //       colorValue = base.propMap.split(":");
-  //       setPidColor(parseInt(colorValue[0]));
-  //       setVidColor(parseInt(colorValue[1]));
-  //     }
-  //     const opt: AxiosRequestConfig = {
-  //       url: `/api/product/skuProp/${pidSize}`,
-  //       method: "GET",
-  //     };
-
-  //     const res = await useRequest(opt);
-  //     // console.log(res?.data);
-  //   });
-  // };
-
-  // useEffectOnUpdate(() => {
-  //   skuPropGetter();
-  // }, [skuBase]);
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
       <div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
         <div className="grid grid-cols-base-col gap-4 grid-rows-base-row h-full">
           <div className=" col-span-1 w-[400px] row-span-1">
-            <img
-              src={`https://${product.image}`}
-              alt="product image"
-              className="h-[560px] w-[650px] rounded-[5px]"
-            />
+            {isChecked ? (
+              <img
+                src={`https://${selectedColor?.image}`}
+                alt="productImage"
+                className="h-[560px] w-[650px] rounded-[5px]"
+              />
+            ) : (
+              <img
+                src={`https://${product?.image}`}
+                alt="productImage"
+                className="h-[560px] w-[650px] rounded-[5px]"
+              />
+            )}
           </div>
           <div className=" col-start-2 flex flex-col gap-3">
-            {product?.image?.map((si, index) => (
+            {product?.image?.map((si: string, index: number) => (
               <img
                 src={`https://${si}`}
                 alt="product image"
@@ -162,16 +135,82 @@ export default function Product() {
         </div>
         <div className="flex flex-col gap-10 w-full">
           <div className="flex flex-col items-start gap-4">
-            <h1 className="font-bold leading-10 text-left text-3xl">
-              {product.title}
-            </h1>
-            <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-              ${product.price}
-            </span>
+            {isChecked ? (
+              <>
+                <h1 className="font-bold leading-10 text-left text-3xl">
+                  {product?.title} ({selectedColor?.title})
+                </h1>
+                <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+                  ${selectedColor?.price}
+                </span>
+              </>
+            ) : (
+              <>
+                <h1 className="font-bold leading-10 text-left text-3xl">
+                  {product?.title}
+                </h1>
+                <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+                  ${subProduct[0]?.price}
+                </span>
+              </>
+            )}
           </div>
           <div className="flex flex-col items-start gap-4">
             <h3 className="font-medium text-left text-2xl">Colors</h3>
-            <span className=" ">{}</span>
+            <div className="flex gap-6 items-center">
+              {productColors.map((color, index) => (
+                <div className="flex flex-col items-center gap-2">
+                  <input
+                    type="radio"
+                    key={index + 1}
+                    name="Colors"
+                    id="color__id"
+                    onClick={() => {
+                      setIsChecked(true);
+                      setSelectedColor(color);
+                      console.log(color);
+                    }}
+                    className=""
+                  />
+
+                  <img
+                    src={`https://${color?.image}`}
+                    alt="product image"
+                    className="h-[45px] w-[45px] rounded-[5px]"
+                    key={index}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col items-start gap-4">
+            <h3 className="font-medium text-left text-2xl">Quantity</h3>
+            {/* <span className=" border-2 border-gray-400 py-1 px-3 font-semibold text-lg">{subProduct[0]?.quantity}</span> */}
+            <div className="flex">
+              <button
+                onClick={decrement}
+                className="bg-blue-600 text-white mx-1 py-0 px-2"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                className=" max-w-[50px] border-[1px] text-lg text-center border-gray-500"
+                value={quantity}
+                min={1}
+                max={900}
+                onChange={(e) =>
+                  setQuantity(Math.min(900, Math.max(1, e.target.value)))
+                }
+                style={{ appearance: "textfield" }}
+              />
+              <button
+                onClick={increment}
+                className="bg-blue-600 text-white mx-1 py-0 px-2"
+              >
+                +
+              </button>
+            </div>
           </div>
           <div className="flex flex-col gap-4 justify-end w-full h-full">
             <button className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">
