@@ -56,6 +56,13 @@ const CustomerReview = ({ name, date, text }: Customer) => {
   );
 };
 
+interface productList {
+  title: string;
+  price: number;
+  quant: number;
+  image: string;
+}
+
 export default function Product() {
   const { id } = useParams();
 
@@ -73,7 +80,6 @@ export default function Product() {
       };
       const res = await useRequest(opt);
       setProduct(res?.data);
-      // console.log(res?.data);
     };
     void Fetch();
   }, []);
@@ -85,7 +91,6 @@ export default function Product() {
       };
       const res = await useRequest(opt);
       setSubProduct(res?.data);
-      // console.log(res?.data);
     };
     void Fetch();
   }, []);
@@ -101,7 +106,26 @@ export default function Product() {
       setQuantity(quantity - 1);
     }
   };
+
   const productColors = subProduct.slice(0, 6);
+  const defaultProductColor = `${product?.title} + (${productColors[0]?.title})`;
+
+  const AddingProductToList = async () => {
+    const data = {
+      productId: id,
+      price: selectedColor?.price,
+      quantity: quantity,
+      image: selectedColor?.image,
+    };
+    const opt: AxiosRequestConfig = {
+      url: `/api/product/cardList`,
+      method: "POST",
+      data,
+    };
+
+    const res = await useRequest(opt);
+    console.log(res?.data);
+  };
 
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
@@ -147,7 +171,7 @@ export default function Product() {
             ) : (
               <>
                 <h1 className="font-bold leading-10 text-left text-3xl">
-                  {product?.title}
+                  {defaultProductColor}
                 </h1>
                 <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
                   ${subProduct[0]?.price}
@@ -168,9 +192,9 @@ export default function Product() {
                     onClick={() => {
                       setIsChecked(true);
                       setSelectedColor(color);
-                      console.log(color);
                     }}
                     className=""
+                    defaultChecked={color === productColors[0]}
                   />
 
                   <img
@@ -213,7 +237,10 @@ export default function Product() {
             </div>
           </div>
           <div className="flex flex-col gap-4 justify-end w-full h-full">
-            <button className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color">
+            <button
+              className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color"
+              onClick={AddingProductToList}
+            >
               Add To Cart
             </button>
             <button className="max-w-[500px] button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4">

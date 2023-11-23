@@ -13,3 +13,18 @@ export class FilterdData {
   @IsNotEmpty()
   priceEnd: string;
 }
+
+export class CardListDto {
+  @IsString()
+  @IsNotEmpty()
+  productId: string;
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
+  @IsNumber()
+  @IsNotEmpty()
+  quantity: number;
+  @IsString()
+  @IsNotEmpty()
+  image: string;
+}

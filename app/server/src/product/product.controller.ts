@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { FilterdData } from './dto';
+import { CardList, CardListDto, FilterdData } from './dto';
+import { AtGuard } from 'src/common/guards';
+import { Request } from 'express';
 
 @Controller('product')
 export class ProductController {
@@ -26,5 +28,12 @@ export class ProductController {
   @Get('subProductId/:id')
   async getSubProducts(@Param('id') id: string) {
     return await this.productService.getSubProducts(id);
+  }
+
+  @UseGuards(AtGuard)
+  @Post('cardList')
+  async getCardLists(@Body() Body: CardListDto, @Req() req: Request) {
+    console.log(Body);
+    return await this.productService.getCardLists(Body, req.user['id']);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { FilterdData } from './dto/product.dto';
+import { CardList, CardListDto, FilterdData } from './dto/product.dto';
 
 @Injectable()
 export class ProductService {
@@ -109,5 +109,27 @@ export class ProductService {
       products.push({ title, image, price: base.price, quantity: base.quantity });
     }
     return products;
+  }
+  async getCardLists(data: CardListDto, userId: string) {
+    const shoppingList = await this.prisma.shoppingList.create({
+      data: {
+        userId,
+      },
+    });
+    await this.prisma.product.update({
+      where: {
+        id: data.productId,
+      },
+      data: {
+        productShopping: {
+          create: {
+            ShoppingListId: shoppingList.id,
+            quantity: data.quantity,
+            // Adding price and image of the selected color
+          },
+        },
+      },
+    });
+    return data;
   }
 }
