@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { CardList, CardListDto, FilterdData } from './dto';
+import { CardListDto, FilterdData } from './dto';
 import { AtGuard } from 'src/common/guards';
 import { Request } from 'express';
 
