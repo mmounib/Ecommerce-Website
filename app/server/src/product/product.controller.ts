@@ -33,7 +33,6 @@ export class ProductController {
   @UseGuards(AtGuard)
   @Post('cardList')
   async getCardLists(@Body() Body: CardListDto, @Req() req: Request) {
-    console.log(Body);
     return await this.productService.getCardLists(Body, req.user['id']);
   }
 }

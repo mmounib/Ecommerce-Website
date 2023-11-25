@@ -74,6 +74,8 @@ model ShoppingProducts {
   productId      String
   ShoppingListId String
   quantity       Int          @default(1)
+  price          Float
+  image          String
   ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
   product        Product      @relation(fields: [productId], references: [id])
 
@@ -92,7 +94,8 @@ model FavouriteProducts {
 model CardsProducts {
   CardsId   String
   productId String
-  price     String
+  price     Float
+  image     String
   quantity  Int       @default(1)
   CardsList CardsList @relation(fields: [CardsId], references: [id])
   Product   Product   @relation(fields: [productId], references: [id])
@@ -139,7 +142,7 @@ model skuValues {
 
 model skuProp {
   id        String      @id @default(uuid())
-  pid       Int 
+  pid       Int
   name      String
   productId String
   Product   Product     @relation(fields: [productId], references: [id])

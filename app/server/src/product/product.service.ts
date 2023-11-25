@@ -125,7 +125,8 @@ export class ProductService {
           create: {
             ShoppingListId: shoppingList.id,
             quantity: data.quantity,
-            // Adding price and image of the selected color
+            price: data.price,
+            image: data.image
           },
         },
       },
