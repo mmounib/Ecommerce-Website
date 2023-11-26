@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRequest } from "../../Hooks/useRequest";
 import { useState } from "react";
 
+
 interface signInProps {
   email: string;
   password: string;
@@ -29,14 +30,6 @@ const SignIn = () => {
       setTimeout(() => setValidation(""), 3000);
     }
   };
-  const HandleGoogle = async () => {
-    const opt: AxiosRequestConfig = {
-      url: "/api/auth/google/login",
-      method: "GET",
-    };
-    await useRequest(opt);
-    navigate("/");
-  };
   return (
     <section className="h-screen w-full bg-sign-in bg-cover bg-gray-500 bg-blend-multiply">
       <div className="flex items-center justify-center w-full h-full">
@@ -44,12 +37,12 @@ const SignIn = () => {
           <h2 className="text-secondary-color font-extrabold text-4xl">
             Welcome Back !
           </h2>
-          <span
+          <Link
             className="border-secondary-color cursor-pointer hover:bg-secondary-color hover:text-primary-color rounded-[5px] border-[1px] flex justify-center gap-6 items-center text-xl py-2 px-8"
-            onClick={HandleGoogle}
+            to="http://localhost:3000/api/auth/google/login"
           >
             <FcGoogle size={35} /> Sign In With Google
-          </span>
+          </Link>
           <div className="flex gap-4 items-center mt-10 w-full">
             <span className=" border-b-gray-400 w-full border-[1px]"></span>
             <p className="text-xl">or</p>

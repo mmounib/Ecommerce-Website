@@ -1,10 +1,8 @@
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
-import axios, { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig } from "axios";
 import { useRequest } from "../../Hooks/useRequest";
-
-axios.defaults.withCredentials = true;
 
 interface signUpProps {
   email: string;

@@ -53,9 +53,11 @@ export interface ProductContainer {
   video?: string;
   image: string[];
 }
-export interface ProductColorsList {
-  title: string;
-  image: string;
-  price: number;
-  quantity: number;
+
+export interface cardList {
+  id?: string,
+  title: string,
+  image: string,
+  price: number,
+  quantity: number,
 }

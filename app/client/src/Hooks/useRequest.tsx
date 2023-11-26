@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+axios.defaults.withCredentials = true;
 
 export const useRequest = async (request: AxiosRequestConfig) => {
   async function refreshAccessToken() {
@@ -23,6 +24,7 @@ export const useRequest = async (request: AxiosRequestConfig) => {
     const response = await axios(request);
     return response;
   } catch (error: any) {
+    console.log(error.response);
     if (error.response && error.response.status == 401) {
       if (error.response.data.message === "invalid token")
         window.location.href = "http://localhost:5173/sign";

@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, LoginDto } from './dto';
-import { AtGuard, RtGuard } from '../common/guards';
-import { Request, Response, response } from 'express';
+import { AtGuard, GoogleGuard, RtGuard } from '../common/guards';
+import { Request, Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('auth')
@@ -24,11 +24,11 @@ export class AuthController {
   ) {}
 
   @Get('google/login')
-  @UseGuards(AtGuard)
+  @UseGuards(GoogleGuard)
   googleLogin() {}
 
   @Get('google/callback')
-  @UseGuards(AtGuard)
+  @UseGuards(GoogleGuard)
   async handleRedirect(@Req() req: Request, @Res() res: Response) {
     if (!req.user) throw new UnauthorizedException('invalid token');
     const [accessToken, refreshToken] = await Promise.all([
@@ -37,7 +37,7 @@ export class AuthController {
     ]);
     await this.authService.updateRtHash(req.user['id'], refreshToken);
     this.authService.setCookies(res, { accessToken, refreshToken });
-    return res.status(HttpStatus.OK).send();
+    return res.redirect('http://localhost:5173/'); 
   }
 
   @Post('signup')

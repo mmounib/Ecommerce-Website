@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CardListDto, FilterdData } from './dto/product.dto';
 
@@ -110,7 +110,7 @@ export class ProductService {
     }
     return products;
   }
-  async getCardLists(data: CardListDto, userId: string) {
+  async addToCardList(data: CardListDto, userId: string) {
     try {
       await this.prisma.shoppingList.create({
         data: {
@@ -128,19 +128,68 @@ export class ProductService {
     });
     await this.prisma.product.update({
       where: {
-        id: data.productId,
+        id: data.id,
       },
       data: {
         productShopping: {
           create: {
             ShoppingListId: shoppingList.shopping.id,
             quantity: data.quantity,
+            title: data.title,
             price: data.price,
             image: data.image,
           },
         },
       },
     });
-    return data;
+  }
+  async getCardList(userId: string) {
+    const res = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        shopping: {
+          include: {
+            ShoppingProducts: {
+              select: {
+                id: true,
+                title: true,
+                image: true,
+                price: true,
+                quantity: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    console.log(res);
+    if (!res) throw new UnauthorizedException('user not found');
+    return res.shopping.ShoppingProducts;
+  }
+
+  async deleteShoppingProduct(productId: string, userId: string) {
+    const userProduct = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        shopping: {
+          select: {
+            ShoppingProducts: {
+              where: {
+                id: productId,
+              },
+            },
+          },
+        },
+      },
+    });
+    await this.prisma.shoppingProducts.delete({
+      where: {
+        id: userProduct.shopping.ShoppingProducts[0].id,
+      },
+    });
   }
 }

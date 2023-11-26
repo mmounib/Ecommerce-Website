@@ -8,7 +8,7 @@ export default function useFetchUser() {
     const [user, setUser] = useState<User>({} as User);
 
 	useLayoutEffect(() => {
-		const fetchUser = async () => {
+		const FetchUser = async () => {
 			const opt: AxiosRequestConfig = {
 				url: "/api/user",
 				method: "GET",
@@ -19,7 +19,7 @@ export default function useFetchUser() {
 				setUser(data);
 			}
 		};
-		void fetchUser();
+		void FetchUser();
 	}, []);
   return user
 }

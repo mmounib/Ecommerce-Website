@@ -12,20 +12,22 @@ export default function UserNav({
 	setShowList: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 	const [user, setUser] = useState<User>({} as User);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	useLayoutEffect(() => {
-		const fetchUser = async () => {
+		const FetchUser = async () => {
 			const opt: AxiosRequestConfig = {
 				url: "/api/user",
 				method: "GET",
 			};
 			const res = await useRequest(opt);
+			setIsLoading(false)
 			if (res) {
 				const data = res.data as User;
 				setUser(data);
 			}
 		};
-		void fetchUser();
+		void FetchUser();
 	}, []);
 
 	const userNav = (
@@ -59,5 +61,6 @@ export default function UserNav({
 		</>
 	);
 
+	if (isLoading) return null;
 	return user?.id ? userNav : noUserNav;
 }

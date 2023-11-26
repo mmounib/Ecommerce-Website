@@ -39,7 +39,7 @@ export default function Category() {
       priceEnd: priceRange.priceEnd === "" ? "99999999" : priceRange.priceEnd,
     };
     const opt: AxiosRequestConfig = {
-      url: `/api/product/${category.current}`,
+      url: `/api/product/categoryName/${category.current}`,
       data,
       method: "PATCH",
     };
@@ -52,7 +52,7 @@ export default function Category() {
   useEffectOnUpdate(() => {
     const FetchProducts = async () => {
       const opt: AxiosRequestConfig = {
-        url: `/api/product/${category.current}`,
+        url: `/api/product/categoryName/${category.current}`,
         method: "GET",
       };
       const res = await useRequest(opt);
