@@ -44,3 +44,18 @@ export interface Customer {
   date: string;
   text: string;
 }
+export interface ProductContainer {
+  id: string;
+  categoryId: string;
+  ImageDesc: string[];
+  price: number;
+  title: string;
+  video?: string;
+  image: string[];
+}
+export interface ProductColorsList {
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
+}

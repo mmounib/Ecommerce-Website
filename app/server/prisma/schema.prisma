@@ -71,6 +71,7 @@ model ShoppingList {
 }
 
 model ShoppingProducts {
+  id             String       @id @default(uuid())
   productId      String
   ShoppingListId String
   quantity       Int          @default(1)
@@ -78,8 +79,6 @@ model ShoppingProducts {
   image          String
   ShoppingList   ShoppingList @relation(fields: [ShoppingListId], references: [id])
   product        Product      @relation(fields: [productId], references: [id])
-
-  @@id([productId, ShoppingListId])
 }
 
 model FavouriteProducts {

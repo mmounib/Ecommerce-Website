@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
-import { Customer, ProductObject } from "../../interfaces";
+import {
+  Customer,
+  ProductColorsList,
+  ProductContainer,
+  ProductObject,
+} from "../../interfaces";
 import { useParams } from "react-router";
 import { AxiosRequestConfig } from "axios";
 import { useRequest } from "../../Hooks/useRequest";
@@ -56,21 +61,14 @@ const CustomerReview = ({ name, date, text }: Customer) => {
   );
 };
 
-interface productList {
-  title: string;
-  price: number;
-  quant: number;
-  image: string;
-}
-
 export default function Product() {
   const { id } = useParams();
 
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState<ProductContainer>();
   const [subProduct, setSubProduct] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [isChecked, setIsChecked] = useState(false);
-  const [selectedColor, setSelectedColor] = useState({});
+  const [selectedColor, setSelectedColor] = useState<ProductColorsList>();
 
   useEffectOnUpdate(() => {
     const Fetch = async () => {
@@ -113,7 +111,7 @@ export default function Product() {
   const AddingProductToList = async () => {
     const data = {
       productId: id,
-      price: selectedColor?.price,
+      price: isChecked ? selectedColor?.price : product?.price,
       quantity: quantity,
       image: selectedColor?.image,
     };
@@ -159,57 +157,50 @@ export default function Product() {
         </div>
         <div className="flex flex-col gap-10 w-full">
           <div className="flex flex-col items-start gap-4">
-            {isChecked ? (
-              <>
-                <h1 className="font-bold leading-10 text-left text-3xl">
-                  {product?.title} ({selectedColor?.title})
-                </h1>
-                <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-                  ${selectedColor?.price}
-                </span>
-              </>
+            <h1 className="font-bold leading-10 text-left text-3xl">
+              {product?.title}
+            </h1>
+            {!isChecked ? (
+              <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+                ${product?.price}
+              </span>
             ) : (
-              <>
-                <h1 className="font-bold leading-10 text-left text-3xl">
-                  {defaultProductColor}
-                </h1>
-                <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-                  ${subProduct[0]?.price}
-                </span>
-              </>
+              <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+                ${selectedColor?.price}
+              </span>
             )}
           </div>
-          <div className="flex flex-col items-start gap-4">
-            <h3 className="font-medium text-left text-2xl">Colors</h3>
+          <div className="flex mt-8 flex-col items-start gap-4">
+            <div className="flex gap-2 items-center">
+              {isChecked ? (
+                <h3 className="font-medium text-left text-2xl">
+                  {selectedColor?.title}
+                </h3>
+              ) : (
+                <h3 className="font-medium text-left text-2xl">
+                  {subProduct[0]?.title}
+                </h3>
+              )}
+            </div>
             <div className="flex gap-6 items-center">
               {productColors.map((color, index) => (
-                <div className="flex flex-col items-center gap-2">
-                  <input
-                    type="radio"
-                    key={index + 1}
-                    name="Colors"
-                    id="color__id"
+                <div className="flex flex-col cursor-pointer items-center gap-2">
+                  <img
+                    src={`https://${color?.image}`}
+                    alt="product image"
                     onClick={() => {
                       setIsChecked(true);
                       setSelectedColor(color);
                     }}
-                    className=""
-                    defaultChecked={color === productColors[0]}
-                  />
-
-                  <img
-                    src={`https://${color?.image}`}
-                    alt="product image"
-                    className="h-[45px] w-[45px] rounded-[5px]"
+                    className="h-[75px] w-[60px] rounded-[10px] hover:brightness-95"
                     key={index}
                   />
                 </div>
               ))}
             </div>
           </div>
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex mt-4 flex-col items-start gap-4">
             <h3 className="font-medium text-left text-2xl">Quantity</h3>
-            {/* <span className=" border-2 border-gray-400 py-1 px-3 font-semibold text-lg">{subProduct[0]?.quantity}</span> */}
             <div className="flex">
               <button
                 onClick={decrement}

@@ -111,9 +111,19 @@ export class ProductService {
     return products;
   }
   async getCardLists(data: CardListDto, userId: string) {
-    const shoppingList = await this.prisma.shoppingList.create({
-      data: {
-        userId,
+    try {
+      await this.prisma.shoppingList.create({
+        data: {
+          userId,
+        },
+      });
+    } catch (err) {}
+    const shoppingList = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        shopping: true,
       },
     });
     await this.prisma.product.update({
@@ -123,10 +133,10 @@ export class ProductService {
       data: {
         productShopping: {
           create: {
-            ShoppingListId: shoppingList.id,
+            ShoppingListId: shoppingList.shopping.id,
             quantity: data.quantity,
             price: data.price,
-            image: data.image
+            image: data.image,
           },
         },
       },
