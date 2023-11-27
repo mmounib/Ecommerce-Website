@@ -3,7 +3,7 @@ import shoppingList from "../assets/icons/shoppingList.svg";
 import profile from "../assets/icons/profile.svg";
 import { User } from "../interfaces";
 import { AxiosRequestConfig } from "axios";
-import { useRequest } from "../Hooks/useRequest";
+import { useRequest } from "../Hooks";
 import { Link } from "react-router-dom";
 
 export default function UserNav({

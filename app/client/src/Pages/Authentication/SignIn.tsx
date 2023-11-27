@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
-import { useRequest } from "../../Hooks/useRequest";
+import { useRequest } from "../../Hooks";
 import { useState } from "react";
 
 

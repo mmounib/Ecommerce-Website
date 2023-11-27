@@ -1,13 +1,8 @@
 import { useState } from "react";
-import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
-import {
-	Customer,
-	ProductContainer,
-  cardList,
-} from "../../interfaces";
+import { Customer, ProductContainer, cardList } from "../../interfaces";
 import { useParams } from "react-router";
 import { AxiosRequestConfig } from "axios";
-import { useRequest } from "../../Hooks/useRequest";
+import { useEffectOnUpdate, useRequest } from "../../Hooks";
 
 const CustomerReview = ({ name, date, text }: Customer) => {
 	return (
@@ -68,10 +63,8 @@ export default function Product() {
 	);
 	const [subProduct, setSubProduct] = useState([]);
 	const [quantity, setQuantity] = useState(1);
-	const [isChecked, setIsChecked] = useState(false);
-	const [selectedColor, setSelectedColor] = useState<cardList>(
-		{} as cardList
-	);
+	const [image, setImage] = useState<string>();
+	const [selectedColor, setSelectedColor] = useState<cardList>({} as cardList);
 
 	useEffectOnUpdate(() => {
 		const Fetch = async () => {
@@ -81,17 +74,11 @@ export default function Product() {
 			};
 			const res = await useRequest(opt);
 			setProduct(res?.data);
-		};
-		void Fetch();
-	}, []);
-	useEffectOnUpdate(() => {
-		const Fetch = async () => {
-			const opt: AxiosRequestConfig = {
+			const response = await useRequest({
 				url: `/api/product/subProductId/${id}`,
 				method: "GET",
-			};
-			const res = await useRequest(opt);
-			setSubProduct(res?.data);
+			});
+			setSubProduct(response?.data);
 		};
 		void Fetch();
 	}, []);
@@ -113,7 +100,7 @@ export default function Product() {
 	const AddingProductToList = async () => {
 		const data: cardList = {
 			id: id,
-			price: isChecked ? selectedColor.price : product.price,
+			price: selectedColor.price ?? product.price,
 			quantity: quantity,
 			image: selectedColor.image,
 			title: product.title,
@@ -131,27 +118,23 @@ export default function Product() {
 			<div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
 				<div className="grid grid-cols-base-col gap-4 grid-rows-base-row h-full">
 					<div className=" col-span-1 w-[400px] row-span-1">
-						{isChecked ? (
-							<img
-								src={`https://${selectedColor?.image}`}
-								alt="productImage"
-								className="h-[560px] w-[650px] rounded-[5px]"
-							/>
-						) : (
-							<img
-								src={`https://${product?.image}`}
-								alt="productImage"
-								className="h-[560px] w-[650px] rounded-[5px]"
-							/>
-						)}
+						<img
+							src={`https://${image ?? selectedColor?.image ?? product?.image}`}
+							alt="productImage"
+							className="h-[560px] w-[650px] rounded-[5px]"
+						/>
 					</div>
 					<div className=" col-start-2 flex flex-col gap-3">
 						{product?.image?.map((si: string, index: number) => (
 							<img
 								src={`https://${si}`}
 								alt="product image"
-								className="h-[75px] w-[95px] rounded-[5px]"
+								className="h-[75px] w-[95px] rounded-[5px] cursor-pointer"
 								key={index}
+								onClick={() => {
+									setImage(si);
+									setSelectedColor({} as cardList);
+								}}
 							/>
 						))}
 					</div>
@@ -161,37 +144,29 @@ export default function Product() {
 						<h1 className="font-bold leading-10 text-left text-3xl">
 							{product?.title}
 						</h1>
-						{!isChecked ? (
-							<span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-								${product?.price}
-							</span>
-						) : (
-							<span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-								${selectedColor?.price}
-							</span>
-						)}
+						<span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+							{selectedColor?.price ?? product.price} $
+						</span>
 					</div>
 					<div className="flex mt-8 flex-col items-start gap-4">
 						<div className="flex gap-2 items-center">
-							{isChecked ? (
-								<h3 className="font-medium text-left text-2xl">
-									{selectedColor?.title}
-								</h3>
-							) : (
-								<h3 className="font-medium text-left text-2xl">
-									{subProduct[0]?.title}
-								</h3>
-							)}
+							<h3 className="font-medium text-left text-2xl">
+								{selectedColor?.title ?? subProduct[0]?.title}
+							</h3>
 						</div>
 						<div className="flex gap-6 items-center">
 							{productColors.map((color, index) => (
-								<div className="flex flex-col cursor-pointer items-center gap-2" key={index}>
+								<div
+									className="flex flex-col cursor-pointer items-center gap-2"
+									key={index}
+								>
 									<img
 										src={`https://${color?.image}`}
 										alt="product image"
 										onClick={() => {
-											setIsChecked(true);
 											setSelectedColor(color);
+											setQuantity(1);
+											setImage(undefined);
 										}}
 										className="h-[75px] w-[60px] rounded-[10px] hover:brightness-95"
 									/>

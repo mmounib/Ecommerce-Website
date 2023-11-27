@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from 'axios';
 import { useLayoutEffect, useState } from 'react'
 import { User } from '../interfaces';
-import { useRequest } from './useRequest';
+import { useRequest } from '.';
 
-export default function useFetchUser() {
+export function useFetchUser() {
 
     const [user, setUser] = useState<User>({} as User);
 

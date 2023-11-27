@@ -1,40 +1,21 @@
 import { Link } from "react-router-dom";
 import Xmark from "../assets/icons/xMark.svg";
-import { nanoid } from "nanoid";
-import image from "../assets/accessoriesCategory.jpeg";
 import trash from "../assets/icons/Trash.png";
-import { useEffect, useState } from "react";
-import { useRequest } from "../Hooks/useRequest";
-import { AxiosRequestConfig } from "axios";
-import { cardList } from "../interfaces";
+import { useFetchCardList, useRequest } from "../Hooks";
 
 export default function ShoppingList({
 	setShowList,
 }: {
 	setShowList: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-
-	const [cardList, setCardList] = useState<cardList[]>([]);
-	const [isDelete, setIsDelete] = useState(false)
-
-	useEffect(() => {
-		const Fetch = async () => {
-			const opt: AxiosRequestConfig = {
-				url: "/api/product/cardList",
-				method: "GET",
-			};
-			const res = await useRequest(opt);
-			setCardList(res?.data);
-		};
-		Fetch();
-	}, [isDelete]);
+	const { cardList, setIsDelete } = useFetchCardList();
 
 	async function handleDelete(productId: string | undefined) {
 		await useRequest({
 			url: `/api/product/cardList/${productId}`,
-			method: 'DELETE',
-		})
-		setIsDelete(prev => !prev)
+			method: "DELETE",
+		});
+		setIsDelete((prev) => !prev);
 	}
 
 	let totalPrice: number = 0;
@@ -54,11 +35,16 @@ export default function ShoppingList({
 				<div className="flex flex-col flex-grow justify-between">
 					<div className="flex flex-col items-start">
 						<h1 className="text-xl font-medium text-left">{item.title}</h1>
-						<p className="text-violet-800 font-medium">{price} MAD</p>
+						<p className="text-violet-800 font-medium">{price} $</p>
 					</div>
 					<footer className="flex justify-between">
 						<p>quantity : {item.quantity}</p>
-						<img className="cursor-pointer" src={trash} alt="" onClick={() => handleDelete(item.id)} />
+						<img
+							className="cursor-pointer"
+							src={trash}
+							alt=""
+							onClick={() => handleDelete(item.id)}
+						/>
 					</footer>
 				</div>
 			</div>
@@ -85,7 +71,7 @@ export default function ShoppingList({
 					className="w-full py-4 rounded-lg mb-12 bg-secondary-color text-primary-color"
 					onClick={() => setShowList(false)}
 				>
-					Check Out - {Math.floor(totalPrice * 100) / 100} MAD
+					Check Out - {Math.floor(totalPrice * 100) / 100} $
 				</Link>
 			</div>
 		</div>

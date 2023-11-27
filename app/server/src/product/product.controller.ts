@@ -10,6 +10,7 @@ export class ProductController {
 
   @Get('categoryName/:categoryName')
   async categoryProducts(@Param('categoryName') categoryName: string) {
+    console.log('name: ', categoryName)
     return await this.productService.categoryProducts(categoryName);
   }
 

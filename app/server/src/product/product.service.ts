@@ -110,6 +110,7 @@ export class ProductService {
     }
     return products;
   }
+
   async addToCardList(data: CardListDto, userId: string) {
     try {
       await this.prisma.shoppingList.create({
@@ -118,7 +119,7 @@ export class ProductService {
         },
       });
     } catch (err) {}
-    const shoppingList = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -133,7 +134,7 @@ export class ProductService {
       data: {
         productShopping: {
           create: {
-            ShoppingListId: shoppingList.shopping.id,
+            ShoppingListId: user.shopping.id,
             quantity: data.quantity,
             title: data.title,
             price: data.price,
@@ -144,7 +145,7 @@ export class ProductService {
     });
   }
   async getCardList(userId: string) {
-    const res = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -164,13 +165,12 @@ export class ProductService {
         },
       },
     });
-    console.log(res);
-    if (!res) throw new UnauthorizedException('user not found');
-    return res.shopping.ShoppingProducts;
+    if (!user) throw new UnauthorizedException('user not found');
+    return user.shopping.ShoppingProducts;
   }
 
   async deleteShoppingProduct(productId: string, userId: string) {
-    const userProduct = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -186,9 +186,10 @@ export class ProductService {
         },
       },
     });
+    if (!user) throw new UnauthorizedException('user not found')
     await this.prisma.shoppingProducts.delete({
       where: {
-        id: userProduct.shopping.ShoppingProducts[0].id,
+        id: user.shopping.ShoppingProducts[0].id,
       },
     });
   }
