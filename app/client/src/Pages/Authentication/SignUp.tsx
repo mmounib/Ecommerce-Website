@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios, { AxiosRequestConfig } from "axios";
 import { useRequest } from "../../Hooks/useRequest";
+import { useState } from "react";
 
 axios.defaults.withCredentials = true;
 
@@ -14,18 +15,15 @@ interface signUpProps {
 }
 
 const SignUp = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm<signUpProps>();
+  const [validation, setValidation] = useState(false);
+  const { register, handleSubmit, watch } = useForm<signUpProps>();
   const navigate = useNavigate();
 
   const password = watch("password");
-  const confirmPassword = watch("confirmPassword");
+  // const confirmPassword = watch("confirmPassword");
 
   const SubmitForm: SubmitHandler<signUpProps> = async (data) => {
+    console.log("here");
     const requestedPage: AxiosRequestConfig = {
       url: "/api/auth/signup",
       method: "post",
@@ -35,9 +33,9 @@ const SignUp = () => {
     navigate("/");
   };
   const validatePasswordMatch = (value: string) => {
-    if (value !== password) {
-      return "Passwords do not match";
-    }
+    if (value !== password) setValidation(true);
+    setTimeout(() => setValidation(false), 3000);
+    return "true";
   };
   return (
     <section className="h-screen w-full bg-sign-bg bg-cover bg-gray-500 bg-blend-multiply bg-center">
@@ -81,7 +79,7 @@ const SignUp = () => {
                 type="password"
                 placeholder="Confirm Password"
                 className={`rounded-[10px] w-full py-4 mt-6 border-secondary-color border-[1px] pl-4 ${
-                  errors.confirmPassword ? "border-red-500" : ""
+                  validation ? "border-red-500 border-2" : ""
                 }`}
                 {...register("confirmPassword", {
                   required: true,
@@ -102,6 +100,14 @@ const SignUp = () => {
               Sign In
             </Link>
           </span>
+
+          {/* {validation && (
+            <div className="flex absolute justify-center transition-all duration-300 ease-in-out w-[300px] bg-red-800 rounded-[5px] py-5">
+              <span className="capitalize text-white italic text-xl">
+                {validation}
+              </span>
+            </div>
+          )} */}
         </div>
         <div className="border-[1px] w-[450px] flex justify-center items-center border-secondary-color h-[635px]">
           <div className="flex items-center justify-center  flex-col gap-4">

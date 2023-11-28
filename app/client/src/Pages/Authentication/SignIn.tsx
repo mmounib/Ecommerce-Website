@@ -26,6 +26,7 @@ const SignIn = () => {
       navigate("/");
     } else {
       setValidation(response?.data);
+      console.log(response?.data)
       setTimeout(() => setValidation(""), 3000);
     }
   };
@@ -83,7 +84,7 @@ const SignIn = () => {
           </span>
 
           {validation.length > 1 && (
-            <div className="flex absolute top-0 justify-center transition-all duration-300 ease-in-out w-[300px] bg-red-800 rounded-[5px] py-5">
+            <div className="flex absolute justify-center transition-all duration-300 ease-in-out w-[300px] bg-red-800 rounded-[5px] py-5">
               <span className="capitalize text-white italic text-xl">
                 {validation}
               </span>

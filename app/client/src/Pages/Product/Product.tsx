@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
 import {
   Customer,
@@ -68,6 +68,7 @@ export default function Product() {
   const [subProduct, setSubProduct] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [isChecked, setIsChecked] = useState(false);
+  const [isUndefined, setIsUndefined] = useState(false);
   const [selectedColor, setSelectedColor] = useState<ProductColorsList>();
 
   useEffectOnUpdate(() => {
@@ -104,14 +105,20 @@ export default function Product() {
       setQuantity(quantity - 1);
     }
   };
+  useEffect(() => {
+    setQuantity(1);
+  }, [selectedColor])
 
   const productColors = subProduct.slice(0, 6);
-  const defaultProductColor = `${product?.title} + (${productColors[0]?.title})`;
 
   const AddingProductToList = async () => {
+    if (!isChecked) {
+      setIsUndefined(true);
+      setTimeout(() => setIsUndefined(false), 4000);
+    }
     const data = {
       productId: id,
-      price: isChecked ? selectedColor?.price : product?.price,
+      price: selectedColor?.price,
       quantity: quantity,
       image: selectedColor?.image,
     };
@@ -121,13 +128,12 @@ export default function Product() {
       data,
     };
 
-    const res = await useRequest(opt);
-    console.log(res?.data);
+    await useRequest(opt);
   };
 
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
-      <div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
+      <div className="flex max-sm:flex-col h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
         <div className="grid grid-cols-base-col gap-4 grid-rows-base-row h-full">
           <div className=" col-span-1 w-[400px] row-span-1">
             {isChecked ? (
@@ -144,7 +150,7 @@ export default function Product() {
               />
             )}
           </div>
-          <div className=" col-start-2 flex flex-col gap-3">
+          <div className=" col-start-2 max-sm:hidden flex flex-col gap-3">
             {product?.image?.map((si: string, index: number) => (
               <img
                 src={`https://${si}`}
@@ -155,7 +161,7 @@ export default function Product() {
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-10 w-full">
+        <div className="flex flex-col gap-10 relative w-full">
           <div className="flex flex-col items-start gap-4">
             <h1 className="font-bold leading-10 text-left text-3xl">
               {product?.title}
@@ -182,7 +188,7 @@ export default function Product() {
                 </h3>
               )}
             </div>
-            <div className="flex gap-6 items-center">
+            <div className="flex gap-6 flex-wrap items-center">
               {productColors.map((color, index) => (
                 <div className="flex flex-col cursor-pointer items-center gap-2">
                   <img
@@ -227,7 +233,12 @@ export default function Product() {
               </button>
             </div>
           </div>
-          <div className="flex flex-col gap-4 justify-end w-full h-full">
+          <div className="flex relative flex-col gap-4 justify-end w-full h-full">
+            {isUndefined && (
+              <span className=" bg-red-800 text-lg right-0 -top-10 z-10 text-white absolute rounded-[10px] py-3 px-6 text-center">
+                Error! You Need To Specify a Color
+              </span>
+            )}
             <button
               className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color"
               onClick={AddingProductToList}
@@ -238,6 +249,23 @@ export default function Product() {
               Favorite
             </button>
           </div>
+        </div>
+      </div>
+      <div className="flex max-w-[1300px] flex-col  mx-auto">
+        <span className="w-full flex h-[2px] mt-32 border-[1px] border-gray-300"></span>
+        <h1 className="text-4xl font-extrabold text-left mt-8 max-sm:text-center">
+          Description Images
+        </h1>
+        <div className="flex flex-col gap-8 mt-14 w-full">
+          {product?.ImageDesc.map((image, index) => (
+            <div key={index} className="w-full max-sm:px-2">
+              <img
+                src={`https://${image}`}
+                alt={image}
+                className="w-full h-[800px] object-cover rounded-[5px]"
+              />
+            </div>
+          ))}
         </div>
       </div>
       <div className="flex flex-col w-full max-w-[1300px] mx-auto gap-6">
