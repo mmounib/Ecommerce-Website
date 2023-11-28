@@ -10,7 +10,6 @@ export class ProductController {
 
   @Get('categoryName/:categoryName')
   async categoryProducts(@Param('categoryName') categoryName: string) {
-    console.log('name: ', categoryName)
     return await this.productService.categoryProducts(categoryName);
   }
 
@@ -48,5 +47,15 @@ export class ProductController {
   @Delete('cardList/:id')
   async deleteShoppingProduct(@Param('id') productId: string, @Req() req: Request) {
     await this.productService.deleteShoppingProduct(productId, req.user['id']);
+  }
+
+  @Get('newArrivals')
+  async getNewArrivals() {
+    return await this.productService.getNewArrivals();
+  }
+
+  @Get('bestSales')
+  async getBestSales() {
+    return await this.productService.getBestSales();
   }
 }

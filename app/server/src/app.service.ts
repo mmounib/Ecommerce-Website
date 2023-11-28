@@ -8,7 +8,8 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
   private index = 0;
   private skuProp: skuProp[];
-  private firstIntervalRunning = false;
+  private firstIntervalRunning = true;
+  private reviewsArray = [];
 
   constructor(
     private readonly prisma: PrismaService,
@@ -18,26 +19,26 @@ export class AppService {
   async syncDataFromApi() {
     const data = [
       {
+        categoryName: 'clothes',
+        search: 'men clothes',
+        categoryDesc:
+          "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
+      },
+      {
         categoryName: 'kids',
         search: 'clothes for kids',
         categoryDesc:
           "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
-      },
+        },
+        {
+          categoryName: 'electronics',
+          search: 'iphones',
+          categoryDesc:
+            "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
+        },
       {
         categoryName: 'accessories',
         search: 'accessories',
-        categoryDesc:
-          "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
-      },
-      {
-        categoryName: 'electronics',
-        search: 'iphones',
-        categoryDesc:
-          "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
-      },
-      {
-        categoryName: 'clothes',
-        search: 'men clothes',
         categoryDesc:
           "Explore our Kids category for the cutest clothes, exciting toys, and essential baby gear. Find everything you need to make your child's world a little brighter.",
       },
@@ -60,7 +61,7 @@ export class AppService {
 
     try {
       const response = await axios.request(options);
-      console.log('reviews: ', response.data.result.reviews.count);
+      this.reviewsArray.push(response.data.result.reviews.count);
       return response.data?.result?.item;
     } catch (error) {
       options.headers['X-RapidAPI-Key'] = this.config.get('API_KEY2');
@@ -71,13 +72,13 @@ export class AppService {
 
   async createProduct(productDetails: any, categoryId: string) {
     for (let i = 0; productDetails.images && i < productDetails.images.length; i++)
-      productDetails.images[i] = productDetails.images[i].slice(2);
+      productDetails.images[i] = 'https:' + productDetails.images[i];
     for (
       let i = 0;
       productDetails.description.images && i < productDetails.description.images.length;
       i++
     )
-      productDetails.description.images[i] = productDetails.description.images[i].slice(2);
+      productDetails.description.images[i] = 'https:' + productDetails.description.images[i];
     try {
       await this.prisma.product.create({
         data: {
@@ -86,7 +87,8 @@ export class AppService {
           price: String(productDetails.sku.def.price),
           image: productDetails.images,
           ImageDesc: productDetails.description.images,
-          video: productDetails.video?.url.slice(2),
+          video: 'https:' + productDetails.video?.url,
+          sales: +productDetails.sales,
           category: {
             connect: {
               id: categoryId,
@@ -157,12 +159,14 @@ export class AppService {
               await Promise.all(
                 item.values?.map(async (value) => {
                   try {
+                    let image = value.image;
+                    if (image) image = 'https:' + image;
                     return await this.prisma.skuValues.create({
                       data: {
                         vid: value.vid,
                         name: value.name,
                         propTips: value.propTips,
-                        image: value.image?.slice(2),
+                        image,
                         skuPropPid: this.skuProp[idx].id,
                       },
                     });
@@ -183,20 +187,34 @@ export class AppService {
   async createProductReviews(productReviews: any, productId: number) {
     try {
       await Promise.all(
-        productReviews.map(async (item) => {
-          for (let i = 0; item.images && i < item.images.length; i++)
-            item.images[i] = item.images[i].slice(2);
-          await this.prisma.reviews.create({
-            data: {
-              Date: item.reviewDate,
-              content: item.reviewContent,
-              stars: item.reviewStarts,
-              images: item.reviewImages,
-              helpful: item.reviewHelpfulYes,
-              productId: String(productId),
-            },
-          });
-        }),
+        productReviews.map(
+          async (item: {
+            review: {
+              reviewDate: string;
+              reviewContent: string;
+              reviewStarts: number;
+              reviewImages: string[];
+              reviewHelpfulYes: number;
+            };
+          }) => {
+            for (let i = 0; item.review.reviewImages && i < item.review.reviewImages.length; i++)
+              item.review.reviewImages[i] = 'https:' + item.review.reviewImages[i];
+            await this.prisma.reviews.create({
+              data: {
+                date: item.review.reviewDate,
+                content: item.review.reviewContent,
+                stars: item.review.reviewStarts,
+                images: item.review.reviewImages ?? [] as string[],
+                helpful: item.review.reviewHelpfulYes,
+                Product: {
+                  connect: {
+                    id: String(productId)
+                  }
+                }
+              },
+            });
+          },
+        ),
       );
     } catch (error) {
       console.log(error);
@@ -241,25 +259,26 @@ export class AppService {
     }
   }
 
-  async requestProductsReviews(response) {
+  async requestProductsReviews(
+    response: any[],
+    reviewTimer: NodeJS.Timeout,
+    resolve: {(value: unknown): void},
+  ) {
     console.log('requestProductsReviews is called');
     if (response && this.index < response.length) {
       const product = response[this.index];
-      this.index++;
-      await this.getAndStoreReviews(product.item.itemId);
+      if (this.reviewsArray[this.index++]) await this.getAndStoreReviews(product.item.itemId);
     } else {
       // All requests are completed
       this.index = 0;
-      this.firstIntervalRunning = false;
+      this.firstIntervalRunning = true;
+      console.log('All requests are completed');
+      clearInterval(reviewTimer);
+      resolve(0);
     }
   }
 
-  async requestProductsDetails(
-    response: any[],
-    reviewTimer: NodeJS.Timeout,
-    categoryId: string,
-    resolve,
-  ) {
+  async requestProductsDetails(response: any[], categoryId: string) {
     console.log('requestProductsDetails is called');
     if (response && this.index < response.length) {
       const product = response[this.index];
@@ -268,10 +287,7 @@ export class AppService {
     } else {
       // All requests are completed
       this.index = 0;
-      this.firstIntervalRunning = true;
-      console.log('all requests are completed');
-      clearInterval(reviewTimer);
-      resolve();
+      this.firstIntervalRunning = false;
     }
   }
 
@@ -312,15 +328,15 @@ export class AppService {
   ) {
     return new Promise((resolve) => {
       const requestTimer = setInterval(() => {
-        // if (this.firstIntervalRunning) {
-        //   this.requestProductsReviews(response);
-        // } else {
-        clearInterval(requestTimer);
-        reviewTimer = setInterval(
-          () => this.requestProductsDetails(response, reviewTimer, categoryId, resolve),
-          requestInterval,
-        );
-        // }
+        if (this.firstIntervalRunning) {
+          this.requestProductsDetails(response, categoryId);
+        } else {
+          clearInterval(requestTimer);
+          reviewTimer = setInterval(
+            () => this.requestProductsReviews(response, reviewTimer, resolve),
+            requestInterval,
+          );
+        }
       }, requestInterval);
     });
   }

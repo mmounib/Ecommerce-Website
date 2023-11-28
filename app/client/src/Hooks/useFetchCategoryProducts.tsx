@@ -31,7 +31,7 @@ export default function useFetchCategoryProducts() {
 				<Link to={`/product/${item.id}`}>
 					<img
 						className="productCard w-full h-96 rounded-lg"
-						src={`https://${item.image[0]}`}
+						src={item.image[0]}
 						alt=""
 					/>
 				</Link>

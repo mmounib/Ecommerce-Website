@@ -193,4 +193,34 @@ export class ProductService {
       },
     });
   }
+
+  async getNewArrivals() {
+    return await this.prisma.product.findMany({
+      where: {
+        sales: 0,
+        reviews: {
+          none: {}
+        },
+      },
+      orderBy: { id: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        image: true,
+        title: true,
+        price: true,
+      }
+    })
+  }
+
+  async getBestSales() {
+    return await this.prisma.product.findMany({
+      orderBy: { sales: 'desc' },
+      take: 4,
+      select: {
+        id: true,
+        image: true,
+      }
+    })
+  }
 }

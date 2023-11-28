@@ -113,13 +113,21 @@ export default function Product() {
 		await useRequest(opt);
 	};
 
+	const AddingToFavList = async () => {
+		const opt: AxiosRequestConfig = {
+			url: `/api/user/addToFavList/${id}`,
+			method: "POST",
+		};
+		await useRequest(opt);
+	};
+
 	return (
 		<section className="py-24 max-w-[1600px] mx-auto">
 			<div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
 				<div className="grid grid-cols-base-col gap-4 grid-rows-base-row h-full">
 					<div className=" col-span-1 w-[400px] row-span-1">
 						<img
-							src={`https://${image ?? selectedColor?.image ?? product?.image}`}
+							src={image ?? selectedColor?.image ?? product?.image}
 							alt="productImage"
 							className="h-[560px] w-[650px] rounded-[5px]"
 						/>
@@ -127,7 +135,7 @@ export default function Product() {
 					<div className=" col-start-2 flex flex-col gap-3">
 						{product?.image?.map((si: string, index: number) => (
 							<img
-								src={`https://${si}`}
+								src={si}
 								alt="product image"
 								className="h-[75px] w-[95px] rounded-[5px] cursor-pointer"
 								key={index}
@@ -161,7 +169,7 @@ export default function Product() {
 									key={index}
 								>
 									<img
-										src={`https://${color?.image}`}
+										src={color?.image}
 										alt="product image"
 										onClick={() => {
 											setSelectedColor(color);
@@ -209,7 +217,7 @@ export default function Product() {
 						>
 							Add To Cart
 						</button>
-						<button className="max-w-[500px] button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4">
+						<button className="max-w-[500px] button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4" onClick={AddingToFavList}>
 							Favorite
 						</button>
 					</div>

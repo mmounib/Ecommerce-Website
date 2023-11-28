@@ -35,6 +35,7 @@ model Product {
   image            String[]
   ImageDesc        String[]
   video            String?
+  sales            Int
   reviews          reviews[]
   base             skuBaseProducts[]
   props            skuProp[]
@@ -47,7 +48,7 @@ model Product {
 
 model reviews {
   id        String   @id @default(uuid())
-  Date      String
+  date      String
   content   String
   stars     Int
   images    String[]

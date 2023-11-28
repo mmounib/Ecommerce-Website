@@ -27,14 +27,12 @@ export function useFetchUserProducts(header: string) {
 				>
 					<img
 						className="productCard w-36 h-44 rounded-lg"
-						src={`https://${item.image[0]}`}
+						src={item.image[0]}
 						alt=""
 					/>
-					<div className="flex flex-col items-start w-full">
-						<h1 className="text-sm font-medium text-left ">{item.title}</h1>
-						<p className="text-violet-800 font-medium text-left">
-							{item.price} $
-						</p>
+					<div className="flex flex-col items-start w-full font-medium text-left">
+						<h1 className="text-sm">{item.title}</h1>
+						<p className="text-violet-800">{item.price} $</p>
 					</div>
 				</Link>
 			);

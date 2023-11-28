@@ -1,22 +1,39 @@
-import { data } from "../../Components/products.json";
 import { Splide, SplideSlide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css/sea-green";
+import { useEffect, useState } from "react";
+import { useRequest } from "../../Hooks";
+import { cardList } from "../../interfaces";
+import { Link } from "react-router-dom";
 
 export default function NewArrivals() {
-	const products = data.map((product) => {
+	const [newArrivals, setNewArrivals] = useState<cardList[]>([]);
+	useEffect(() => {
+		const Fetch = async () => {
+			const res = await useRequest({
+				url: "/api/product/newArrivals",
+				method: "GET",
+			});
+			setNewArrivals(res?.data);
+		};
+		Fetch();
+	}, []);
+
+	const products = newArrivals.map((product) => {
 		return (
 			<SplideSlide
-				key={product.itemId}
-				className="newArrivalProduct flex flex-col gap-4 items-center text-center overflow-hidden"
+				key={product.id}
+				className="newArrivalProduct flex flex-col gap-4 overflow-hidden"
 			>
-				<img
-					className="productCard flex-grow rounded-lg"
-					src={product.image}
-					alt=""
-				/>
-				<div>
-					<h1 className="text-lg font-semibold">{product.title}</h1>
-					<p className="text-violet-800 font-medium">{product.price}.00$</p>
+				<Link to={`/product/${product.id}`} className="productCard flex-grow rounded-lg">
+					<img
+						className="w-full h-full"
+						src={product.image[0]}
+						alt=""
+					/>
+				</Link>
+				<div className="font-medium text-left">
+					<h1 className="text-sm">{product.title}</h1>
+					<p className="text-violet-800">{product.price} $</p>
 				</div>
 			</SplideSlide>
 		);

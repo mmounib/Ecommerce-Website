@@ -21,21 +21,21 @@ export default function ShoppingList({
 	let totalPrice: number = 0;
 
 	const products = cardList?.map((item) => {
-		const price = Math.floor(item.price * item.quantity * 100) / 100;
+		const price = Math.floor(item.price * Number(item.quantity) * 100) / 100;
 		totalPrice += price;
 		return (
-			<div className="flex gap-8 justify-between w-full" key={item.id}>
-				<Link to={`/product/${item.id}`}>
+			<div className="flex gap-8 justify-between w-full bg-gray-200 rounded-lg p-2" key={item.id}>
+				<Link to={`/product/${item.id}`} className="w-full h-52">
 					<img
-						className="productCard w-36 h-52 rounded-lg"
-						src={`https://${item.image}`}
+						className="productCard w-full h-full rounded-lg"
+						src={item.image}
 						alt=""
 					/>
 				</Link>
 				<div className="flex flex-col flex-grow justify-between">
-					<div className="flex flex-col items-start">
-						<h1 className="text-xl font-medium text-left">{item.title}</h1>
-						<p className="text-violet-800 font-medium">{price} $</p>
+					<div className="flex flex-col items-start w-full font-medium text-left">
+						<h1 className="text-base">{item.title}</h1>
+						<p className="text-violet-800">{price} $</p>
 					</div>
 					<footer className="flex justify-between">
 						<p>quantity : {item.quantity}</p>
