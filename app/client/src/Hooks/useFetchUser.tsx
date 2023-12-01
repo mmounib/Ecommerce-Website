@@ -1,14 +1,14 @@
 import { AxiosRequestConfig } from 'axios';
 import { useLayoutEffect, useState } from 'react'
 import { User } from '../interfaces';
-import { useRequest } from './useRequest';
+import { useRequest } from '.';
 
-export default function useFetchUser() {
+export function useFetchUser() {
 
     const [user, setUser] = useState<User>({} as User);
 
 	useLayoutEffect(() => {
-		const fetchUser = async () => {
+		const FetchUser = async () => {
 			const opt: AxiosRequestConfig = {
 				url: "/api/user",
 				method: "GET",
@@ -19,7 +19,7 @@ export default function useFetchUser() {
 				setUser(data);
 			}
 		};
-		void fetchUser();
+		void FetchUser();
 	}, []);
   return user
 }

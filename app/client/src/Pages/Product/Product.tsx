@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
-import { useEffectOnUpdate } from "../../Hooks/useEffectOnUpdate";
-import {
-  Customer,
-  ProductColorsList,
-  ProductContainer,
-  ProductObject,
-} from "../../interfaces";
+import { Customer, ProductContainer, cardList } from "../../interfaces";
 import { useParams } from "react-router";
 import { AxiosRequestConfig } from "axios";
-import { useRequest } from "../../Hooks/useRequest";
+import { useEffectOnUpdate, useRequest } from "../../Hooks";
 
 const CustomerReview = ({ name, date, text }: Customer) => {
   return (
@@ -64,12 +58,13 @@ const CustomerReview = ({ name, date, text }: Customer) => {
 export default function Product() {
   const { id } = useParams();
 
-  const [product, setProduct] = useState<ProductContainer>();
+  const [product, setProduct] = useState<ProductContainer>(
+    {} as ProductContainer
+  );
   const [subProduct, setSubProduct] = useState([]);
   const [quantity, setQuantity] = useState(1);
-  const [isChecked, setIsChecked] = useState(false);
-  const [isUndefined, setIsUndefined] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<ProductColorsList>();
+  const [image, setImage] = useState<string>();
+  const [selectedColor, setSelectedColor] = useState<cardList>({} as cardList);
 
   useEffectOnUpdate(() => {
     const Fetch = async () => {
@@ -79,17 +74,11 @@ export default function Product() {
       };
       const res = await useRequest(opt);
       setProduct(res?.data);
-    };
-    void Fetch();
-  }, []);
-  useEffectOnUpdate(() => {
-    const Fetch = async () => {
-      const opt: AxiosRequestConfig = {
+      const response = await useRequest({
         url: `/api/product/subProductId/${id}`,
         method: "GET",
-      };
-      const res = await useRequest(opt);
-      setSubProduct(res?.data);
+      });
+      setSubProduct(response?.data);
     };
     void Fetch();
   }, []);
@@ -107,99 +96,91 @@ export default function Product() {
   };
   useEffect(() => {
     setQuantity(1);
-  }, [selectedColor])
+  }, [selectedColor]);
 
   const productColors = subProduct.slice(0, 6);
 
   const AddingProductToList = async () => {
-    if (!isChecked) {
-      setIsUndefined(true);
-      setTimeout(() => setIsUndefined(false), 4000);
-    }
-    const data = {
-      productId: id,
-      price: selectedColor?.price,
+    const data: cardList = {
+      id: id,
+      price: selectedColor.price ?? product.price,
       quantity: quantity,
-      image: selectedColor?.image,
+      image: selectedColor.image,
+      title: product.title,
     };
     const opt: AxiosRequestConfig = {
-      url: `/api/product/cardList`,
+      url: `/api/product/addToCardList`,
       method: "POST",
       data,
     };
+    const res = await useRequest(opt);
+    console.log(res?.data);
+  };
 
+  const AddingToFavList = async () => {
+    const opt: AxiosRequestConfig = {
+      url: `/api/user/addToFavList/${id}`,
+      method: "POST",
+    };
     await useRequest(opt);
   };
 
   return (
     <section className="py-24 max-w-[1600px] mx-auto">
-      <div className="flex max-sm:flex-col h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
+      <div className="flex h-full gap-12 w-full justify-center max-w-[1250px] mx-auto">
         <div className="grid grid-cols-base-col gap-4 grid-rows-base-row h-full">
           <div className=" col-span-1 w-[400px] row-span-1">
-            {isChecked ? (
-              <img
-                src={`https://${selectedColor?.image}`}
-                alt="productImage"
-                className="h-[560px] w-[650px] rounded-[5px]"
-              />
-            ) : (
-              <img
-                src={`https://${product?.image}`}
-                alt="productImage"
-                className="h-[560px] w-[650px] rounded-[5px]"
-              />
-            )}
+            <img
+              src={image ?? selectedColor?.image ?? product?.image}
+              alt="productImage"
+              className="h-[560px] w-[650px] rounded-[5px]"
+            />
           </div>
-          <div className=" col-start-2 max-sm:hidden flex flex-col gap-3">
+          <div className=" col-start-2 flex flex-col gap-3">
             {product?.image?.map((si: string, index: number) => (
               <img
-                src={`https://${si}`}
+                src={si}
                 alt="product image"
-                className="h-[75px] w-[95px] rounded-[5px]"
+                className="h-[75px] w-[95px] rounded-[5px] cursor-pointer"
                 key={index}
+                onClick={() => {
+                  setImage(si);
+                  setSelectedColor({} as cardList);
+                }}
               />
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-10 relative w-full">
+        <div className="flex flex-col gap-10 w-full">
           <div className="flex flex-col items-start gap-4">
             <h1 className="font-bold leading-10 text-left text-3xl">
               {product?.title}
             </h1>
-            {!isChecked ? (
-              <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-                ${product?.price}
-              </span>
-            ) : (
-              <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
-                ${selectedColor?.price}
-              </span>
-            )}
+            <span className=" mt-1 font-medium text-xl text-primary-color bg-blue-600 rounded-[5px] py-2 px-4 italic">
+              {selectedColor?.price ?? product.price} $
+            </span>
           </div>
           <div className="flex mt-8 flex-col items-start gap-4">
             <div className="flex gap-2 items-center">
-              {isChecked ? (
-                <h3 className="font-medium text-left text-2xl">
-                  {selectedColor?.title}
-                </h3>
-              ) : (
-                <h3 className="font-medium text-left text-2xl">
-                  {subProduct[0]?.title}
-                </h3>
-              )}
+              <h3 className="font-medium text-left text-2xl">
+                {selectedColor?.title ?? subProduct[0]?.title}
+              </h3>
             </div>
-            <div className="flex gap-6 flex-wrap items-center">
+            <div className="flex gap-6 items-center">
               {productColors.map((color, index) => (
-                <div className="flex flex-col cursor-pointer items-center gap-2">
+                <div
+                  className="flex flex-col cursor-pointer items-center gap-2"
+                  key={index}
+                >
                   <img
-                    src={`https://${color?.image}`}
+                    src={color?.image}
                     alt="product image"
                     onClick={() => {
-                      setIsChecked(true);
                       setSelectedColor(color);
+                      setQuantity(1);
+                      setImage(undefined);
                     }}
                     className="h-[75px] w-[60px] rounded-[10px] hover:brightness-95"
-                    key={index}
                   />
                 </div>
               ))}
@@ -221,7 +202,7 @@ export default function Product() {
                 min={1}
                 max={900}
                 onChange={(e) =>
-                  setQuantity(Math.min(900, Math.max(1, e.target.value)))
+                  setQuantity(Math.min(900, Math.max(1, +e.target.value)))
                 }
                 style={{ appearance: "textfield" }}
               />
@@ -233,39 +214,36 @@ export default function Product() {
               </button>
             </div>
           </div>
-          <div className="flex relative flex-col gap-4 justify-end w-full h-full">
-            {isUndefined && (
-              <span className=" bg-red-800 text-lg right-0 -top-10 z-10 text-white absolute rounded-[10px] py-3 px-6 text-center">
-                Error! You Need To Specify a Color
-              </span>
-            )}
+          <div className="flex flex-col gap-4 justify-end w-full h-full">
             <button
               className=" max-w-[500px] rounded-[5px] uppercase py-4 font-medium bg-secondary-color button-1 relative transition-all duration-500 text-primary-color"
               onClick={AddingProductToList}
             >
               Add To Cart
             </button>
-            <button className="max-w-[500px] button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4">
+            <button
+              className="max-w-[500px] button-2 uppercase font-medium border-secondary-color relative transition-all duration-500 border-[1px] py-4"
+              onClick={AddingToFavList}
+            >
               Favorite
             </button>
           </div>
         </div>
       </div>
-      <div className="flex max-w-[1300px] flex-col  mx-auto">
+      <div className="flex w-full flex-col max-w-[1300px] mx-auto gap-6">
         <span className="w-full flex h-[2px] mt-32 border-[1px] border-gray-300"></span>
-        <h1 className="text-4xl font-extrabold text-left mt-8 max-sm:text-center">
+        <h1 className="font-extrabold text-4xl text-left mt-8">
           Description Images
         </h1>
-        <div className="flex flex-col gap-8 mt-14 w-full">
-          {product?.ImageDesc.map((image, index) => (
-            <div key={index} className="w-full max-sm:px-2">
-              <img
-                src={`https://${image}`}
-                alt={image}
-                className="w-full h-[800px] object-cover rounded-[5px]"
-              />
-            </div>
-          ))}
+        <div className="flex flex-col gap-6 w-full">
+          {/* {product?.ImageDesc.map((image, index) => (
+            <img
+              src={`${image}`}
+              alt="productImage"
+              className="h-[860px] w-full rounded-[5px]"
+              key={index}
+            />
+          ))} */}
         </div>
       </div>
       <div className="flex flex-col w-full max-w-[1300px] mx-auto gap-6">

@@ -17,7 +17,7 @@ export class FilterdData {
 export class CardListDto {
   @IsString()
   @IsNotEmpty()
-  productId: string;
+  id: string;
   @IsNumber()
   @IsNotEmpty()
   price: number;
@@ -27,4 +27,7 @@ export class CardListDto {
   @IsString()
   @IsNotEmpty()
   image: string;
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 }

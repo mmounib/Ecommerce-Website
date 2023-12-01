@@ -45,10 +45,10 @@ const SignUp = () => {
             Create Account
           </h2>
           <Link
-            to={"/"}
-            className="border-secondary-color hover:bg-secondary-color hover:text-primary-color rounded-[5px] border-[1px] flex justify-center gap-6 items-center text-xl py-2 px-8"
+            className="border-secondary-color cursor-pointer hover:bg-secondary-color hover:text-primary-color rounded-[5px] border-[1px] flex justify-center gap-6 items-center text-xl py-2 px-8"
+            to="http://localhost:3000/api/auth/google/login"
           >
-            <FcGoogle size={35} /> Sign Up With Google
+            <FcGoogle size={35} /> Sign In With Google
           </Link>
           <div className="flex gap-4 items-center mt-10 w-full">
             <span className=" border-b-gray-400 w-full border-[1px]"></span>

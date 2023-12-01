@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CardListDto, FilterdData } from './dto/product.dto';
 
@@ -110,7 +110,8 @@ export class ProductService {
     }
     return products;
   }
-  async getCardLists(data: CardListDto, userId: string) {
+
+  async addToCardList(data: CardListDto, userId: string) {
     try {
       await this.prisma.shoppingList.create({
         data: {
@@ -118,7 +119,7 @@ export class ProductService {
         },
       });
     } catch (err) {}
-    const shoppingList = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -128,19 +129,98 @@ export class ProductService {
     });
     await this.prisma.product.update({
       where: {
-        id: data.productId,
+        id: data.id,
       },
       data: {
         productShopping: {
           create: {
-            ShoppingListId: shoppingList.shopping.id,
+            ShoppingListId: user.shopping.id,
             quantity: data.quantity,
+            title: data.title,
             price: data.price,
             image: data.image,
           },
         },
       },
     });
-    return data;
+  }
+  async getCardList(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        shopping: {
+          include: {
+            ShoppingProducts: {
+              select: {
+                id: true,
+                title: true,
+                image: true,
+                price: true,
+                quantity: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!user) throw new UnauthorizedException('user not found');
+    return user.shopping.ShoppingProducts;
+  }
+
+  async deleteShoppingProduct(productId: string, userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        shopping: {
+          select: {
+            ShoppingProducts: {
+              where: {
+                id: productId,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!user) throw new UnauthorizedException('user not found');
+    await this.prisma.shoppingProducts.delete({
+      where: {
+        id: user.shopping.ShoppingProducts[0].id,
+      },
+    });
+  }
+
+  async getNewArrivals() {
+    return await this.prisma.product.findMany({
+      where: {
+        sales: 0,
+        reviews: {
+          none: {},
+        },
+      },
+      orderBy: { id: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        image: true,
+        title: true,
+        price: true,
+      },
+    });
+  }
+
+  async getBestSales() {
+    return await this.prisma.product.findMany({
+      orderBy: { sales: 'desc' },
+      take: 4,
+      select: {
+        id: true,
+        image: true,
+      },
+    });
   }
 }

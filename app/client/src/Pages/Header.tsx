@@ -37,8 +37,6 @@ export default function Header() {
 		);
 	});
 
-	console.log("Header re-render")
-
 	return (
 		<header className="flex justify-between items-center text-xl px-8 lg:px-16 xl:px-24 py-7 border-b-2 border-l-gray-400">
 			<Link to="/" className="text-2xl font-bold">
