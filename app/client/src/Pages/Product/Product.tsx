@@ -101,20 +101,23 @@ export default function Product() {
   const productColors = subProduct.slice(0, 6);
 
   const AddingProductToList = async () => {
-    const data: cardList = {
-      id: id,
-      price: selectedColor.price ?? product.price,
-      quantity: quantity,
-      image: selectedColor.image,
-      title: product.title,
-    };
-    const opt: AxiosRequestConfig = {
-      url: `/api/product/addToCardList`,
-      method: "POST",
-      data,
-    };
-    const res = await useRequest(opt);
-    console.log(res?.data);
+    if (Object.keys(selectedColor).length != 0) {
+      const data: cardList = {
+        id: id,
+        price: selectedColor.price,
+        quantity: quantity,
+        image: selectedColor.image,
+        title: product.title,
+      };
+      console.log(data);
+      const opt: AxiosRequestConfig = {
+        url: `/api/product/addToCardList`,
+        method: "POST",
+        data,
+      };
+      const res = await useRequest(opt);
+      console.log(res?.data);
+    }
   };
 
   const AddingToFavList = async () => {
@@ -236,14 +239,15 @@ export default function Product() {
           Description Images
         </h1>
         <div className="flex flex-col gap-6 w-full">
-          {/* {product?.ImageDesc.map((image, index) => (
-            <img
-              src={`${image}`}
-              alt="productImage"
-              className="h-[860px] w-full rounded-[5px]"
-              key={index}
-            />
-          ))} */}
+          {product.ImageDesc &&
+            product.ImageDesc.map((image, index) => (
+              <img
+                src={`${image}`}
+                alt="productImage"
+                className="h-[860px] w-full rounded-[5px]"
+                key={index}
+              />
+            ))}
         </div>
       </div>
       <div className="flex flex-col w-full max-w-[1300px] mx-auto gap-6">
