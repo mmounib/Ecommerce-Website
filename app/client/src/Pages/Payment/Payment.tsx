@@ -1,7 +1,8 @@
 import React from 'react'
+import StripeIntegration from './StripeIntegration'
 
 export default function Payment() {
   return (
-    <div>Payment</div>
+    <StripeIntegration />
   )
 }
